@@ -298,7 +298,39 @@ svg.donut{transform:rotate(-90deg);}
 .pb-race{color:var(--text2);}
 .pb-time{font-family:var(--fm);font-weight:500;}
 
-/* ── BOTTOM NAV ── */
+/* ── DIARY ── */
+.diary-year-row{display:flex;gap:7px;flex-wrap:wrap;}
+.diary-year-btn{flex:1;min-width:80px;padding:11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;}
+.diary-year-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-year-btn.active{background:var(--td);border-color:var(--tb);color:var(--teal);}
+.diary-year-btn .diary-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);margin:4px auto 0;}
+
+.diary-month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.diary-month-btn{padding:10px 4px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;position:relative;}
+.diary-month-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-month-btn.has-entry{border-color:rgba(0,200,150,.2);}
+.diary-month-btn.has-entry::after{content:'';position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--teal);}
+.diary-month-btn.current{border-color:var(--tb);color:var(--teal);font-weight:700;}
+
+.diary-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;}
+.diary-day-hdr{font-size:9px;color:var(--text3);text-align:center;padding:4px 0;}
+.diary-day-btn{padding:8px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-family:var(--fm);font-size:12px;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;position:relative;min-height:36px;}
+.diary-day-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-day-btn.today{border-color:var(--tb);color:var(--teal);font-weight:700;}
+.diary-day-btn.has-entry{background:rgba(0,200,150,.07);border-color:rgba(0,200,150,.25);}
+.diary-day-btn.has-entry::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--teal);}
+.diary-day-btn.empty{opacity:.25;cursor:default;}
+.diary-day-btn.race-day{border-color:var(--ab);color:var(--amber);}
+
+.diary-back-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);transition:all .15s;white-space:nowrap;}
+.diary-back-btn:hover{color:var(--teal);border-color:var(--tb);}
+
+.diary-msg{padding:9px 12px;border-radius:var(--r);font-size:13px;line-height:1.65;max-width:88%;}
+.diary-msg.user{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);align-self:flex-end;}
+.diary-msg.coach{background:var(--td);border:1px solid var(--tb);color:var(--text);align-self:flex-start;}
+.diary-msg .msg-time{font-size:9px;color:var(--text3);margin-top:4px;}
+
+/* ── DIARY TAB in tabs bar ── */
 .bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:rgba(9,12,15,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:9px 0 14px;z-index:100;}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:3px 0;}
 .ni-icon{font-size:20px;opacity:.32;transition:all .18s;}
@@ -343,6 +375,7 @@ svg.donut{transform:rotate(-90deg);}
   <div class="tab active" onclick="switchTab('today',this)">今日 ✨</div>
   <div class="tab" onclick="switchTab('stats',this)">统计 📊</div>
   <div class="tab" onclick="switchTab('schedule',this)">课表 📅</div>
+  <div class="tab" onclick="switchTab('diary',this)">日记 📓</div>
   <div class="tab" onclick="switchTab('feel',this)">体感 🌡</div>
   <div class="tab" onclick="switchTab('profile',this)">档案 👤</div>
 </div>
@@ -759,6 +792,93 @@ svg.donut{transform:rotate(-90deg);}
 </div>
 </div>
 
+<!-- ════════ DIARY ════════ -->
+<div id="tc-diary" class="tc">
+<div class="sec">
+  <div class="sec-lbl">📓 教练日记</div>
+
+  <!-- YEAR → MONTH → DAY CALENDAR -->
+  <div class="card" id="diary-cal-card">
+    <div class="card-body" style="padding:12px">
+
+      <!-- YEAR SELECTOR -->
+      <div class="diary-year-row" id="diary-year-row"></div>
+
+      <!-- MONTH GRID -->
+      <div id="diary-month-grid" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="diary-back-btn" onclick="diaryBack('year')">← 返回</div>
+          <div style="font-family:var(--fd);font-size:14px;font-weight:700" id="diary-year-label"></div>
+        </div>
+        <div class="diary-month-grid" id="diary-months"></div>
+      </div>
+
+      <!-- DAY GRID -->
+      <div id="diary-day-grid" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="diary-back-btn" onclick="diaryBack('month')">← 返回</div>
+          <div style="font-family:var(--fd);font-size:14px;font-weight:700" id="diary-month-label"></div>
+        </div>
+        <div class="diary-day-grid" id="diary-days"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SELECTED DATE ENTRY -->
+  <div id="diary-entry" style="display:none">
+
+    <!-- DATE HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:700" id="diary-date-title"></div>
+        <div style="font-size:11px;color:var(--text2)" id="diary-date-sub"></div>
+      </div>
+      <div class="diary-back-btn" onclick="diaryBack('day')" style="padding:6px 12px">← 日历</div>
+    </div>
+
+    <!-- TRAINING SUMMARY (auto from log) -->
+    <div class="card" id="diary-training-card" style="margin-bottom:10px;display:none">
+      <div class="card-hdr">
+        <div style="font-size:12px;font-weight:600;color:var(--teal)">当日训练记录</div>
+      </div>
+      <div class="card-body" id="diary-training-content"></div>
+    </div>
+
+    <!-- PLAN FOR THAT DAY -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-hdr">
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">📋 当日计划课表</div>
+      </div>
+      <div class="card-body" id="diary-plan-content">
+        <div style="font-size:12px;color:var(--text3)">无计划数据</div>
+      </div>
+    </div>
+
+    <!-- CONVERSATION -->
+    <div class="sec-lbl" style="padding:0">💬 与教练对话</div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-body" style="padding:10px">
+        <div id="diary-msgs" style="min-height:60px;max-height:320px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px">
+          <div style="text-align:center;font-size:11px;color:var(--text3);padding:12px">选择日期后可以向教练提问</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <textarea class="inp" id="diary-input" rows="2" placeholder="问教练任何问题：今天训练强度合适吗？明天应该怎么跑？" style="flex:1;resize:none"></textarea>
+          <button onclick="sendDiaryMsg()" style="padding:0 14px;background:var(--teal);border:none;border-radius:var(--r);color:#000;font-weight:700;font-size:18px;cursor:pointer;flex-shrink:0">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI LOADING -->
+    <div class="ai-loading" id="diary-loading">
+      <div class="ld"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+      <div class="ld-txt">教练思考中...</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
 </div><!-- end .app -->
 
 <!-- BOTTOM NAV -->
@@ -766,6 +886,7 @@ svg.donut{transform:rotate(-90deg);}
   <div class="ni active" onclick="switchNav('today',this)"><div class="ni-icon">✨</div><div class="ni-lbl">今日</div></div>
   <div class="ni" onclick="switchNav('stats',this)"><div class="ni-icon">📊</div><div class="ni-lbl">统计</div></div>
   <div class="ni" onclick="switchNav('schedule',this)"><div class="ni-icon">📅</div><div class="ni-lbl">课表</div></div>
+  <div class="ni" onclick="switchNav('diary',this)"><div class="ni-icon">📓</div><div class="ni-lbl">日记</div></div>
   <div class="ni" onclick="switchNav('feel',this)"><div class="ni-icon">🌡</div><div class="ni-lbl">体感</div></div>
   <div class="ni" onclick="switchNav('profile',this)"><div class="ni-icon">👤</div><div class="ni-lbl">档案</div></div>
 </div>
@@ -1255,8 +1376,7 @@ ${flags.length?'特殊：'+flags.join('、'):''}
   document.getElementById('feel-submit').disabled=false;
   // Update today tab
   if(text){
-    const first=text.split('
-').find(l=>l.trim())||text;
+    const first=text.split('\n').find(l=>l.trim())||text;
     document.getElementById('today-tip-text').innerHTML='<strong>教练建议（已更新）：</strong>'+first;
     document.getElementById('plan-adj-box').style.display='block';
     document.getElementById('plan-adj-title').textContent=first.length>40?first.substring(0,40)+'...':first;
@@ -1569,6 +1689,166 @@ function lookupDate(){
   html+=`<div class="day-nav"><div class="day-nav-btn" onclick="setDate('${prev.toISOString().split('T')[0]}')">&larr; ${prev.getMonth()+1}/${prev.getDate()}</div><div class="day-nav-btn" onclick="setDate('${next.toISOString().split('T')[0]}')">${next.getMonth()+1}/${next.getDate()} &rarr;</div></div>`;
   result.innerHTML=html;
 }
+
+// ── DIARY ──
+let diaryData={};
+let diaryState={view:'year',year:null,month:null,date:null};
+const MONTHS_ZH=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const DAYS_ZH=['日','一','二','三','四','五','六'];
+
+function initDiary(){
+  try{const s=localStorage.getItem('wendy_diary');if(s)diaryData=JSON.parse(s);}catch(e){}
+  renderDiaryYear();
+}
+function saveDiary(){try{localStorage.setItem('wendy_diary',JSON.stringify(diaryData));}catch(e){}}
+
+function renderDiaryYear(){
+  diaryState.view='year';
+  document.getElementById('diary-cal-card').style.display='block';
+  document.getElementById('diary-entry').style.display='none';
+  document.getElementById('diary-year-row').style.display='flex';
+  document.getElementById('diary-month-grid').style.display='none';
+  document.getElementById('diary-day-grid').style.display='none';
+  const now=new Date();
+  const years=[2025,2026,2027];
+  document.getElementById('diary-year-row').innerHTML=years.map(y=>{
+    const has=Object.keys(diaryData).some(k=>k.startsWith(y+''));
+    return `<div class="diary-year-btn${y===now.getFullYear()?' active':''}" onclick="selectDiaryYear(${y})">${y}${has?'<div class="diary-dot"></div>':''}</div>`;
+  }).join('');
+}
+
+function selectDiaryYear(year){
+  diaryState.year=year;diaryState.view='month';
+  document.getElementById('diary-year-row').style.display='none';
+  document.getElementById('diary-month-grid').style.display='block';
+  document.getElementById('diary-year-label').textContent=year+'年';
+  const now=new Date();
+  document.getElementById('diary-months').innerHTML=MONTHS_ZH.map((m,i)=>{
+    const mo=i+1;
+    const has=Object.keys(diaryData).some(k=>k.startsWith(year+'-'+String(mo).padStart(2,'0')));
+    const cur=year===now.getFullYear()&&mo===now.getMonth()+1;
+    return `<div class="diary-month-btn${has?' has-entry':''}${cur?' current':''}" onclick="selectDiaryMonth(${year},${mo})">${m}</div>`;
+  }).join('');
+}
+
+function selectDiaryMonth(year,month){
+  diaryState.year=year;diaryState.month=month;diaryState.view='day';
+  document.getElementById('diary-month-grid').style.display='none';
+  document.getElementById('diary-day-grid').style.display='block';
+  document.getElementById('diary-month-label').textContent=year+'年 '+MONTHS_ZH[month-1];
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+  const firstDay=new Date(year,month-1,1).getDay();
+  const daysInMonth=new Date(year,month,0).getDate();
+  let html=DAYS_ZH.map(d=>`<div class="diary-day-hdr">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="diary-day-btn empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=year+'-'+String(month).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const has=diaryData[ds]&&diaryData[ds].msgs&&diaryData[ds].msgs.length>0;
+    const isT=ds===todayStr;
+    const tr=PLAN[ds];
+    const isR=tr&&tr.isRace;
+    let cls='diary-day-btn'+(isT?' today':'')+(has?' has-entry':'')+(isR?' race-day':'');
+    html+=`<div class="${cls}" onclick="selectDiaryDate('${ds}')">${d}</div>`;
+  }
+  document.getElementById('diary-days').innerHTML=html;
+}
+
+function selectDiaryDate(dateStr){
+  diaryState.date=dateStr;
+  document.getElementById('diary-cal-card').style.display='none';
+  document.getElementById('diary-entry').style.display='block';
+  const d=new Date(dateStr+'T00:00:00');
+  const m=d.getMonth()+1,day=d.getDate(),wday=DAYS_ZH[d.getDay()];
+  document.getElementById('diary-date-title').textContent=m+'月'+day+'日 · 周'+wday;
+  const tr=PLAN[dateStr];
+  document.getElementById('diary-date-sub').textContent=tr?(tr.week||'')+' · '+(tr.phase||''):'计划范围外';
+  // Plan card
+  const pc=document.getElementById('diary-plan-content');
+  if(tr){
+    if(tr.isRest)pc.innerHTML=`<div style="font-size:12px;color:var(--text2)">💤 完全休息日</div>`;
+    else if(tr.isRace)pc.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--amber)">${tr.raceName}</div><div style="font-size:11px;color:var(--text2);margin-top:3px">${tr.raceKm}km · 训练赛</div>`;
+    else pc.innerHTML=`<div style="font-size:13px;font-weight:600;margin-bottom:5px">${tr.title||tr.typeName}</div><div style="display:flex;gap:8px;font-size:11px;color:var(--text2)"><span>📏 ${tr.dist||'—'}</span><span>⏱ ${(tr.pace||'').split('–')[0]||'—'}</span><span>❤️ ${tr.hr||'—'}</span></div>`;
+  }else{
+    pc.innerHTML=`<div style="font-size:12px;color:var(--text3)">此日期不在备战计划内</div>`;
+  }
+  // Training log
+  const logs=trainingLog.filter(e=>e.date===dateStr);
+  const tc=document.getElementById('diary-training-card');
+  const tcon=document.getElementById('diary-training-content');
+  if(logs.length>0){
+    tc.style.display='block';
+    tcon.innerHTML=logs.map(e=>`<div style="font-size:12px;display:flex;gap:8px"><span style="font-weight:600;color:var(--teal)">${e.km}km</span><span style="color:var(--text2)">${e.type}</span>${e.pace?`<span style="color:var(--text3)">@${e.pace}</span>`:''} ${e.hr?`<span style="color:var(--text3)">${e.hr}bpm</span>`:''}</div>`).join('');
+  }else{tc.style.display='none';}
+  // Msgs
+  const msgs=document.getElementById('diary-msgs');
+  if(!diaryData[dateStr]||!diaryData[dateStr].msgs||diaryData[dateStr].msgs.length===0){
+    const tr2=PLAN[dateStr];
+    const welcome=tr2?(tr2.isRest?'今天是休息日，有什么想聊的吗？':tr2.isRace?`今天是${tr2.raceName}！有什么问题要问我？`:`今天计划是${tr2.title||tr2.typeName}，有什么问题？`):'这天不在训练计划内，有什么想问的吗？';
+    msgs.innerHTML=`<div class="diary-msg coach"><div>${welcome}</div><div class="msg-time">教练</div></div>`;
+  }else{
+    renderDiaryMsgs(dateStr);
+  }
+}
+
+function renderDiaryMsgs(dateStr){
+  const msgs=document.getElementById('diary-msgs');
+  const data=diaryData[dateStr];
+  if(!data||!data.msgs||!data.msgs.length)return;
+  msgs.innerHTML=data.msgs.map(m=>`<div class="diary-msg ${m.role}"><div>${m.text}</div><div class="msg-time">${m.time||''}</div></div>`).join('');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+async function sendDiaryMsg(){
+  const input=document.getElementById('diary-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const dateStr=diaryState.date;if(!dateStr)return;
+  if(!diaryData[dateStr])diaryData[dateStr]={msgs:[]};
+  const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  diaryData[dateStr].msgs.push({role:'user',text,time});
+  saveDiary();renderDiaryMsgs(dateStr);input.value='';
+  document.getElementById('diary-loading').classList.add('show');
+  const tr=PLAN[dateStr];
+  const d=new Date(dateStr+'T00:00:00');
+  const dateLabel=(d.getMonth()+1)+'月'+d.getDate()+'日';
+  const planDesc=tr?(tr.isRest?'完全休息日':tr.isRace?tr.raceName:tr.title||tr.typeName):'计划外';
+  const logs=trainingLog.filter(e=>e.date===dateStr);
+  const logDesc=logs.length>0?logs.map(e=>`跑了${e.km}km心率${e.hr||'?'}bpm`).join('；'):'无训练记录';
+  const history=(diaryData[dateStr].msgs||[]).slice(-8).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text}));
+  const prompt=`日期：${dateLabel}\n当日计划：${planDesc}\n实际训练：${logDesc}\n问题：${text}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:WENDY_PROFILE,
+        messages:[...history.slice(0,-1),{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    const reply=data.content.map(b=>b.text||'').join('');
+    document.getElementById('diary-loading').classList.remove('show');
+    const rt=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    diaryData[dateStr].msgs.push({role:'coach',text:reply,time:rt});
+    saveDiary();renderDiaryMsgs(dateStr);
+  }catch(e){
+    document.getElementById('diary-loading').classList.remove('show');
+    const rt=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    diaryData[dateStr].msgs.push({role:'coach',text:'网络问题，请稍后重试。',time:rt});
+    saveDiary();renderDiaryMsgs(dateStr);
+  }
+}
+
+function diaryBack(to){
+  if(to==='year'){renderDiaryYear();}
+  else if(to==='month'){document.getElementById('diary-day-grid').style.display='none';document.getElementById('diary-month-grid').style.display='block';}
+  else if(to==='day'){document.getElementById('diary-cal-card').style.display='block';document.getElementById('diary-entry').style.display='none';document.getElementById('diary-year-row').style.display='none';document.getElementById('diary-month-grid').style.display='none';document.getElementById('diary-day-grid').style.display='block';}
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey&&document.activeElement.id==='diary-input'){e.preventDefault();sendDiaryMsg();}
+});
+
+// Init on load
+window.addEventListener('load',function(){initDiary();});
 </script>
 </body>
 </html>
