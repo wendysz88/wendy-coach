@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Wendy Coach · 柏林马2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=Noto+Sans+SC:wght@300;400;500&display=swap');
+:root{
+  --bg:#090c0f;--bg2:#111519;--bg3:#181e25;--bg4:#1f2730;
+  --border:rgba(255,255,255,0.06);--border2:rgba(255,255,255,0.11);
+  --text:#e6ecf2;--text2:#7a8b9a;--text3:#445566;
+  --teal:#00c896;--td:rgba(0,200,150,0.1);--tb:rgba(0,200,150,0.2);
+  --amber:#f5a623;--ad:rgba(245,166,35,0.1);--ab:rgba(245,166,35,0.22);
+  --blue:#4d9fff;--bd:rgba(77,159,255,0.1);
+  --purple:#a78bfa;--pd:rgba(167,139,250,0.1);
+  --red:#ff5c5c;--rd:rgba(255,92,92,0.1);
+  --green:#22c55e;--gd:rgba(34,197,94,0.1);
+  --fd:'Syne',sans-serif;--fm:'DM Mono',monospace;--fb:'Noto Sans SC',sans-serif;
+  --r:10px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;}
+body{background:var(--bg);color:var(--text);font-family:var(--fb);overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,200,150,0.02) 1px,transparent 1px),linear-gradient(90deg,rgba(0,200,150,0.02) 1px,transparent 1px);background-size:44px 44px;pointer-events:none;z-index:0;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.4;transform:scale(.7)}50%{opacity:1;transform:scale(1)}}
+.fade-up{animation:fadeUp .35s ease both;}
+
+/* ── LAYOUT ── */
+.app{position:relative;z-index:1;max-width:440px;margin:0 auto;padding-bottom:72px;min-height:100vh;}
+
+/* ── HEADER ── */
+.hdr{padding:18px 18px 0;display:flex;align-items:center;justify-content:space-between;}
+.hdr-l{display:flex;align-items:center;gap:10px;}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0055ff);display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-weight:800;font-size:15px;color:#fff;flex-shrink:0;}
+.hdr-name{font-family:var(--fd);font-weight:700;font-size:16px;}
+.hdr-sub{font-size:11px;color:var(--text2);margin-top:1px;}
+.hdr-r{text-align:right;}
+.hdr-date{font-family:var(--fm);font-size:11px;color:var(--text3);}
+.hdr-status{font-size:10px;color:var(--teal);margin-top:2px;}
+
+/* ── COUNTDOWN ── */
+.cd{margin:12px 18px 0;background:linear-gradient(135deg,rgba(0,200,150,.07),rgba(0,200,150,.02));border:1px solid var(--tb);border-radius:var(--rl);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;}
+.cd-l .cd-race{font-size:10px;color:var(--teal);font-weight:500;letter-spacing:.08em;text-transform:uppercase;margin-bottom:3px;}
+.cd-l .cd-name{font-family:var(--fd);font-size:15px;font-weight:700;}
+.cd-l .cd-goal{font-size:11px;color:var(--text2);margin-top:2px;}
+.cd-days{font-family:var(--fm);font-size:32px;font-weight:500;color:var(--teal);line-height:1;}
+.cd-lbl{font-size:10px;color:var(--text2);text-align:right;margin-top:2px;}
+
+/* ── TABS ── */
+.tabs{display:flex;padding:12px 18px 0;gap:5px;overflow-x:auto;scrollbar-width:none;}
+.tabs::-webkit-scrollbar{display:none;}
+.tab{flex-shrink:0;padding:7px 13px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;transition:all .18s;white-space:nowrap;}
+.tab.active{background:var(--teal);color:#000;border-color:var(--teal);font-weight:700;}
+
+/* ── SECTION ── */
+.sec{padding:14px 18px 0;}
+.sec-lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.tc{display:none;}
+.tc.active{display:block;}
+
+/* ── CARDS ── */
+.card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);overflow:hidden;margin-bottom:10px;}
+.card-hdr{padding:11px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.card-body{padding:13px 14px;}
+.dot{width:7px;height:7px;border-radius:50%;}
+.badge{font-size:10px;padding:2px 8px;border-radius:10px;font-weight:500;}
+
+/* ── TODAY TAB ── */
+.today-status{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
+.ts-ring{width:52px;height:52px;flex-shrink:0;}
+.ts-info{flex:1;}
+.ts-score{font-family:var(--fm);font-size:22px;font-weight:500;}
+.ts-label{font-size:11px;color:var(--text2);margin-top:2px;}
+.ts-factors{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.tsf{font-size:10px;padding:2px 7px;border-radius:10px;border:1px solid var(--border2);color:var(--text3);}
+.tsf.good{border-color:var(--tb);color:var(--teal);background:var(--td);}
+.tsf.warn{border-color:var(--ab);color:var(--amber);background:var(--ad);}
+.tsf.bad{border-color:rgba(255,92,92,.2);color:var(--red);background:var(--rd);}
+
+.plan-original{background:var(--bg3);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border);}
+.plan-adjusted{background:rgba(0,200,150,.04);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border:1px solid var(--tb);}
+.plan-tag{font-size:10px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;}
+.plan-title{font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:3px;}
+.plan-detail{font-size:12px;color:var(--text2);line-height:1.6;}
+
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0;}
+.mbox{background:var(--bg3);border-radius:var(--r);padding:9px;border:1px solid var(--border);}
+.mlbl{font-size:9px;color:var(--text3);margin-bottom:3px;}
+.mval{font-family:var(--fm);font-size:14px;font-weight:500;}
+.munit{font-size:9px;color:var(--text3);}
+
+.sbox{background:var(--bg3);border-radius:var(--r);padding:11px;border:1px solid var(--border);margin-bottom:10px;}
+.sbox-t{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px;}
+.seg{display:flex;align-items:center;gap:7px;margin-bottom:5px;font-size:12px;}
+.seg:last-child{margin-bottom:0;}
+.seg-pip{width:3px;height:18px;border-radius:2px;flex-shrink:0;}
+.seg-n{min-width:36px;color:var(--text2);}
+.seg-d{flex:1;color:var(--text);}
+.seg-p{font-family:var(--fm);font-size:10px;color:var(--text3);white-space:nowrap;}
+
+.coach-tip{background:rgba(0,200,150,.05);border:1px solid var(--tb);border-radius:var(--r);padding:9px 11px;display:flex;gap:7px;font-size:12px;color:var(--text2);line-height:1.65;}
+.coach-tip strong{color:var(--teal);}
+
+.ai-loading{display:none;text-align:center;padding:20px;}
+.ai-loading.show{display:block;}
+.ld{display:flex;justify-content:center;gap:5px;margin-bottom:7px;}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--teal);animation:pulse 1.2s infinite;}
+.ldot:nth-child(2){animation-delay:.2s;}
+.ldot:nth-child(3){animation-delay:.4s;}
+.ld-txt{font-size:11px;color:var(--text2);}
+
+.ai-result{display:none;animation:fadeUp .3s ease;}
+.ai-result.show{display:block;}
+.ai-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.ai-icon{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--teal),#0055ff);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.ai-title{font-size:13px;font-weight:600;color:var(--teal);}
+.ai-time{font-size:10px;color:var(--text3);}
+.ai-body{font-size:13px;color:var(--text2);line-height:1.8;white-space:pre-wrap;}
+
+/* ── FEEL TAB ── */
+.garmin-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px;}
+.gm{background:var(--bg3);border-radius:var(--r);padding:11px;border:1px solid var(--border);}
+.gm-lbl{font-size:10px;color:var(--text3);margin-bottom:5px;display:flex;align-items:center;gap:4px;}
+.gm-input{width:100%;background:transparent;border:none;color:var(--text);font-family:var(--fm);font-size:20px;font-weight:500;outline:none;padding:0;}
+.gm-input::placeholder{color:var(--text3);font-size:16px;}
+.gm-unit{font-size:10px;color:var(--text3);margin-top:3px;}
+.gm-bar{height:3px;border-radius:2px;margin-top:7px;background:var(--bg4);overflow:hidden;}
+.gm-bar-fill{height:100%;border-radius:2px;transition:width .5s ease;}
+.gm-status{display:none;padding:9px 11px;border-radius:var(--r);font-size:12px;line-height:1.6;margin-bottom:10px;}
+.gm-status.show{display:block;}
+.gm-status.good{background:var(--td);border:1px solid var(--tb);color:var(--text2);}
+.gm-status.warn{background:var(--ad);border:1px solid var(--ab);color:var(--text2);}
+.gm-status.bad{background:var(--rd);border:1px solid rgba(255,92,92,.2);color:var(--text2);}
+.gm-status strong{font-weight:500;}
+.gm-status.good strong{color:var(--teal);}
+.gm-status.warn strong{color:var(--amber);}
+.gm-status.bad strong{color:var(--red);}
+
+.feel-label{font-size:12px;font-weight:500;margin-bottom:7px;}
+.feel-opts{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.fopt{padding:6px 11px;border-radius:20px;font-size:11px;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;user-select:none;}
+.fopt.sel{border-color:var(--tb);background:var(--td);color:var(--teal);font-weight:500;}
+.fopt.warn.sel{border-color:var(--ab);background:var(--ad);color:var(--amber);}
+.fopt.bad.sel{border-color:rgba(255,92,92,.2);background:var(--rd);color:var(--red);}
+.fcheck{padding:5px 10px;border-radius:20px;font-size:11px;border:1px solid var(--border);background:var(--bg3);color:var(--text3);cursor:pointer;transition:all .15s;user-select:none;}
+.fcheck.sel{border-color:rgba(255,92,92,.2);background:var(--rd);color:var(--red);}
+.fchecks{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px;}
+
+.submit-btn{width:100%;padding:12px;background:var(--teal);border:none;border-radius:var(--r);color:#000;font-family:var(--fd);font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:4px;}
+.submit-btn:hover{opacity:.9;}
+.submit-btn:disabled{opacity:.4;cursor:not-allowed;}
+
+.post-inputs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.inp-g{display:flex;flex-direction:column;gap:3px;}
+.inp-lbl{font-size:10px;color:var(--text3);}
+.inp{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:9px 11px;color:var(--text);font-family:var(--fb);font-size:13px;outline:none;width:100%;}
+.inp:focus{border-color:var(--tb);}
+.inp::placeholder{color:var(--text3);}
+textarea.inp{resize:none;}
+
+/* ── STATS TAB ── */
+.stat-hero{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:16px;margin-bottom:10px;}
+.stat-hero-title{font-family:var(--fd);font-size:14px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.ring-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;}
+.ring-cell{text-align:center;}
+.ring-wrap{position:relative;width:72px;height:72px;margin:0 auto 6px;}
+svg.donut{transform:rotate(-90deg);}
+.donut-track{fill:none;stroke:var(--bg3);stroke-width:7;}
+.donut-fill{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset 1s ease;}
+.ring-pct{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:var(--fm);font-size:13px;font-weight:500;}
+.ring-lbl{font-size:10px;color:var(--text3);}
+.ring-vals{font-size:11px;color:var(--text2);margin-top:2px;}
+
+.prog-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.prog-label{font-size:12px;min-width:56px;}
+.prog-track{flex:1;height:7px;background:var(--bg3);border-radius:4px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:4px;transition:width .8s ease;}
+.prog-val{font-family:var(--fm);font-size:11px;color:var(--text2);min-width:70px;text-align:right;}
+
+.log-row{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.log-row:last-child{border-bottom:none;}
+.log-date{font-family:var(--fm);font-size:11px;color:var(--text3);min-width:42px;}
+.log-type{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.log-name{flex:1;color:var(--text);}
+.log-km{font-family:var(--fm);color:var(--teal);min-width:36px;text-align:right;}
+.log-del{font-size:14px;color:var(--text3);cursor:pointer;padding:2px 6px;border-radius:4px;transition:all .15s;}
+.log-del:hover{color:var(--red);background:var(--rd);}
+
+.add-log-form{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;margin-bottom:10px;}
+.add-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px;}
+.add-form-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px;}
+.add-btn{width:100%;padding:11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);color:var(--teal);font-size:13px;font-weight:500;cursor:pointer;transition:all .15s;}
+.add-btn:hover{background:var(--td);border-color:var(--tb);}
+
+.bar-chart{display:flex;align-items:flex-end;gap:3px;height:64px;margin:10px 0 6px;}
+.bc-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;}
+.bc-bar{width:100%;border-radius:3px 3px 0 0;min-height:2px;transition:height .5s ease;}
+.bc-lbl{font-family:var(--fm);font-size:8px;color:var(--text3);}
+.bc-target{border-top:1px dashed rgba(0,200,150,.3);width:100%;position:relative;}
+
+/* ── SCHEDULE TAB ── */
+.view-row{display:flex;gap:6px;margin-bottom:12px;}
+.vt{flex:1;padding:8px;border-radius:var(--r);font-size:12px;font-weight:500;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);cursor:pointer;text-align:center;transition:all .2s;}
+.vt.active{background:var(--teal);color:#000;border-color:var(--teal);font-weight:700;}
+
+.wv-hdr{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:13px 15px;margin-bottom:9px;display:flex;align-items:center;justify-content:space-between;}
+.wv-title{font-family:var(--fd);font-size:15px;font-weight:700;}
+.wv-dates{font-size:10px;color:var(--text3);margin-top:2px;}
+.wv-km-big{font-family:var(--fm);font-size:20px;font-weight:500;color:var(--teal);}
+.wv-km-lbl{font-size:9px;color:var(--text3);text-align:right;}
+.wv-focus{background:var(--td);border:1px solid var(--tb);border-radius:var(--r);padding:9px 11px;font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:9px;}
+.wv-focus strong{color:var(--teal);}
+
+.wv-row{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);margin-bottom:5px;overflow:hidden;cursor:pointer;transition:border-color .15s;}
+.wv-row:hover{border-color:var(--border2);}
+.wv-row.today-r{border-color:var(--tb);}
+.wv-row.race-r{border-color:var(--ab);}
+.wv-top{display:flex;align-items:stretch;}
+.wv-stripe{width:4px;flex-shrink:0;}
+.wv-daycol{min-width:44px;padding:9px 7px;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;flex-shrink:0;}
+.wv-dn{font-size:9px;color:var(--text3);}
+.wv-dd{font-family:var(--fm);font-size:14px;font-weight:500;}
+.wv-dd.today-n{color:var(--teal);}
+.wv-main{flex:1;padding:9px 11px;display:flex;align-items:center;gap:7px;}
+.wv-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.wv-info{flex:1;}
+.wv-name{font-size:13px;font-weight:500;line-height:1.3;}
+.wv-sub{font-size:10px;color:var(--text3);margin-top:1px;}
+.wv-rc{display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;}
+.wv-badge{font-size:10px;padding:2px 6px;border-radius:9px;font-weight:500;white-space:nowrap;}
+.wv-km{font-family:var(--fm);font-size:10px;color:var(--text3);}
+.wv-detail{display:none;padding:8px 11px 11px 54px;border-top:1px solid var(--border);background:rgba(0,0,0,.12);}
+.wv-detail.open{display:block;}
+.wv-seg{display:flex;gap:5px;margin-bottom:4px;align-items:flex-start;font-size:11px;}
+.wv-sp{width:3px;height:14px;border-radius:2px;flex-shrink:0;margin-top:2px;}
+.wv-st{color:var(--text2);flex:1;line-height:1.5;}
+.wv-sp2{font-family:var(--fm);font-size:10px;color:var(--text3);padding-top:2px;white-space:nowrap;}
+.wv-tip{background:rgba(0,200,150,.04);border:1px solid var(--tb);border-radius:7px;padding:7px 9px;margin-top:7px;font-size:11px;color:var(--text2);line-height:1.6;}
+.wv-tip strong{color:var(--teal);}
+
+.day-view-wrap{display:none;}
+.day-view-wrap.show{display:block;}
+.week-view-wrap{display:none;}
+.week-view-wrap.show{display:block;}
+
+.picker-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;margin-bottom:12px;}
+.picker-row{display:flex;gap:7px;align-items:center;margin-bottom:11px;}
+.date-input{flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:10px 12px;color:var(--text);font-family:var(--fm);font-size:15px;outline:none;-webkit-appearance:none;}
+.date-input:focus{border-color:var(--tb);}
+.date-input::-webkit-calendar-picker-indicator{filter:invert(0.5);}
+.go-btn{padding:10px 16px;background:var(--teal);border:none;border-radius:var(--r);color:#000;font-family:var(--fd);font-size:13px;font-weight:700;cursor:pointer;}
+.qd-wrap{display:flex;gap:5px;flex-wrap:wrap;}
+.qd{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;white-space:nowrap;}
+.qd.race{border-color:var(--ab);color:var(--amber);background:var(--ad);}
+.qd.today-q{border-color:var(--tb);color:var(--teal);background:var(--td);}
+
+.wchips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.wchip{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:500;border:1px solid var(--border2);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.wchip.active{background:var(--teal);color:#000;border-color:var(--teal);}
+.wchip.race-c{border-color:var(--ab);color:var(--amber);}
+.wchip.race-c.active{background:var(--amber);color:#000;}
+.wnav{display:flex;gap:7px;margin-top:9px;}
+.wnav-btn{flex:1;padding:9px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:12px;cursor:pointer;text-align:center;transition:all .15s;}
+.wnav-btn:hover{border-color:var(--tb);color:var(--teal);}
+
+.phase-bar{height:3px;border-radius:2px;background:var(--bg3);overflow:hidden;margin-bottom:5px;}
+.phase-fill{height:100%;border-radius:2px;}
+.phase-info{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:12px;}
+
+.rest-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:22px;text-align:center;margin-bottom:9px;}
+.race-card{background:linear-gradient(135deg,rgba(245,166,35,.07),rgba(245,166,35,.02));border:1px solid var(--ab);border-radius:var(--rl);padding:18px;margin-bottom:9px;}
+.day-nav{display:flex;gap:7px;margin-top:10px;}
+.day-nav-btn{flex:1;padding:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text2);font-size:12px;cursor:pointer;text-align:center;transition:all .15s;}
+.day-nav-btn:hover{border-color:var(--tb);color:var(--teal);}
+.oor{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rl);padding:22px;text-align:center;}
+
+/* ── PROFILE TAB ── */
+.p-hero{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:16px;margin-bottom:9px;}
+.p-name{font-family:var(--fd);font-size:20px;font-weight:800;margin-bottom:2px;}
+.p-meta{font-size:11px;color:var(--text2);margin-bottom:12px;}
+.p-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;}
+.pst{background:var(--bg3);border-radius:var(--r);padding:9px;border:1px solid var(--border);}
+.pst-v{font-family:var(--fm);font-size:15px;font-weight:500;}
+.pst-l{font-size:9px;color:var(--text3);margin-top:2px;}
+.zones-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;margin-bottom:9px;}
+.zrow{display:flex;align-items:center;gap:9px;margin-bottom:9px;font-size:12px;}
+.zrow:last-child{margin-bottom:0;}
+.zbar{width:3px;height:32px;border-radius:2px;flex-shrink:0;}
+.zinfo{flex:1;}
+.zname{font-weight:500;margin-bottom:1px;}
+.zdetail{color:var(--text2);font-size:10px;}
+.zpace{font-family:var(--fm);font-size:11px;color:var(--text2);}
+.pb-card{background:var(--bg2);border:1px solid var(--border2);border-radius:var(--rl);padding:14px;margin-bottom:9px;}
+.pb-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.pb-row:last-child{border-bottom:none;}
+.pb-race{color:var(--text2);}
+.pb-time{font-family:var(--fm);font-weight:500;}
+
+/* ── DIARY ── */
+.diary-year-row{display:flex;gap:7px;flex-wrap:wrap;}
+.diary-year-btn{flex:1;min-width:80px;padding:11px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);font-family:var(--fd);font-size:14px;font-weight:700;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;}
+.diary-year-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-year-btn.active{background:var(--td);border-color:var(--tb);color:var(--teal);}
+.diary-year-btn .diary-dot{width:5px;height:5px;border-radius:50%;background:var(--teal);margin:4px auto 0;}
+
+.diary-month-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;}
+.diary-month-btn{padding:10px 4px;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;position:relative;}
+.diary-month-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-month-btn.has-entry{border-color:rgba(0,200,150,.2);}
+.diary-month-btn.has-entry::after{content:'';position:absolute;top:4px;right:4px;width:5px;height:5px;border-radius:50%;background:var(--teal);}
+.diary-month-btn.current{border-color:var(--tb);color:var(--teal);font-weight:700;}
+
+.diary-day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:4px;}
+.diary-day-hdr{font-size:9px;color:var(--text3);text-align:center;padding:4px 0;}
+.diary-day-btn{padding:8px 4px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;font-family:var(--fm);font-size:12px;color:var(--text2);cursor:pointer;text-align:center;transition:all .15s;position:relative;min-height:36px;}
+.diary-day-btn:hover{border-color:var(--tb);color:var(--teal);}
+.diary-day-btn.today{border-color:var(--tb);color:var(--teal);font-weight:700;}
+.diary-day-btn.has-entry{background:rgba(0,200,150,.07);border-color:rgba(0,200,150,.25);}
+.diary-day-btn.has-entry::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;border-radius:50%;background:var(--teal);}
+.diary-day-btn.empty{opacity:.25;cursor:default;}
+.diary-day-btn.race-day{border-color:var(--ab);color:var(--amber);}
+
+.diary-back-btn{font-size:11px;color:var(--text3);cursor:pointer;padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:var(--bg3);transition:all .15s;white-space:nowrap;}
+.diary-back-btn:hover{color:var(--teal);border-color:var(--tb);}
+
+.diary-msg{padding:9px 12px;border-radius:var(--r);font-size:13px;line-height:1.65;max-width:88%;}
+.diary-msg.user{background:var(--bg3);border:1px solid var(--border2);color:var(--text2);align-self:flex-end;}
+.diary-msg.coach{background:var(--td);border:1px solid var(--tb);color:var(--text);align-self:flex-start;}
+.diary-msg .msg-time{font-size:9px;color:var(--text3);margin-top:4px;}
+
+/* ── DIARY TAB in tabs bar ── */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:440px;background:rgba(9,12,15,.96);backdrop-filter:blur(20px);border-top:1px solid var(--border);display:flex;padding:9px 0 14px;z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:3px 0;}
+.ni-icon{font-size:20px;opacity:.32;transition:all .18s;}
+.ni-lbl{font-size:9px;color:var(--text3);font-weight:500;letter-spacing:.04em;transition:all .18s;}
+.ni.active .ni-icon{opacity:1;}
+.ni.active .ni-lbl{color:var(--teal);}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-l">
+    <div class="avatar">W</div>
+    <div>
+      <div class="hdr-name">Wendy 教练台</div>
+      <div class="hdr-sub">柏林马 · W1 建量期</div>
+    </div>
+  </div>
+  <div class="hdr-r">
+    <div class="hdr-date" id="hdr-date">2026.05.13</div>
+    <div class="hdr-status">● 训练日</div>
+  </div>
+</div>
+
+<!-- COUNTDOWN -->
+<div class="cd">
+  <div class="cd-l">
+    <div class="cd-race">🎯 柏林马拉松</div>
+    <div class="cd-name">Sub-4:00</div>
+    <div class="cd-goal">配速 5:41 · 心率 ≤153bpm</div>
+  </div>
+  <div>
+    <div class="cd-days" id="cd-days">137</div>
+    <div class="cd-lbl">天后开跑</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('today',this)">今日 ✨</div>
+  <div class="tab" onclick="switchTab('stats',this)">统计 📊</div>
+  <div class="tab" onclick="switchTab('schedule',this)">课表 📅</div>
+  <div class="tab" onclick="switchTab('diary',this)">日记 📓</div>
+  <div class="tab" onclick="switchTab('feel',this)">体感 🌡</div>
+  <div class="tab" onclick="switchTab('profile',this)">档案 👤</div>
+</div>
+
+<!-- ════════ TODAY ════════ -->
+<div id="tc-today" class="tc active">
+<div class="sec">
+  <div class="sec-lbl">今日训练状态</div>
+
+  <!-- READINESS -->
+  <div class="card" id="readiness-card">
+    <div class="card-body">
+      <div class="today-status">
+        <svg class="ts-ring" width="52" height="52" viewBox="0 0 52 52">
+          <circle cx="26" cy="26" r="20" fill="none" stroke="var(--bg3)" stroke-width="6" transform="rotate(-90 26 26)"/>
+          <circle id="readiness-ring" cx="26" cy="26" r="20" fill="none" stroke="var(--teal)" stroke-width="6" stroke-linecap="round" stroke-dasharray="125.7" stroke-dashoffset="25" transform="rotate(-90 26 26)" style="transition:stroke-dashoffset 1s ease"/>
+        </svg>
+        <div class="ts-info">
+          <div class="ts-score" id="readiness-score" style="color:var(--teal)">80%</div>
+          <div class="ts-label">训练准备度</div>
+          <div class="ts-factors" id="ts-factors">
+            <span class="tsf good">HRV 正常</span>
+            <span class="tsf good">睡眠良好</span>
+            <span class="tsf">待填体感</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TODAY PLAN -->
+  <div class="card" id="today-plan-card">
+    <div class="card-hdr">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="dot" style="background:var(--amber)"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--amber)" id="today-type-name">T · 乳酸门槛跑</div>
+      </div>
+      <div style="font-family:var(--fm);font-size:11px;color:var(--text3)" id="today-weekday">W1 · 周三</div>
+    </div>
+    <div class="card-body">
+      <div id="ai-adjusted-plan">
+        <div class="plan-original" id="plan-original-box">
+          <div class="plan-tag" style="color:var(--text3)">📋 原计划</div>
+          <div class="plan-title" id="plan-orig-title">E2热身 + T门槛3km + E3放松</div>
+          <div class="plan-detail" id="plan-orig-detail">8km · T段5:20–5:28 · 心率158–165bpm</div>
+        </div>
+        <div class="plan-adjusted" id="plan-adj-box" style="display:none">
+          <div class="plan-tag" style="color:var(--teal)">🤖 AI调整后</div>
+          <div class="plan-title" id="plan-adj-title">—</div>
+          <div class="plan-detail" id="plan-adj-detail">—</div>
+        </div>
+      </div>
+
+      <div class="metrics-row">
+        <div class="mbox"><div class="mlbl">目标距离</div><div class="mval" id="td-dist">8<span class="munit">km</span></div></div>
+        <div class="mbox"><div class="mlbl">配速参考</div><div class="mval" id="td-pace" style="font-size:12px">T:5:25<span class="munit">/k</span></div></div>
+        <div class="mbox"><div class="mlbl">心率目标</div><div class="mval" id="td-hr" style="font-size:12px">158–165</div></div>
+      </div>
+
+      <div class="sbox" id="today-structure">
+        <div class="sbox-t">课程结构</div>
+        <div class="seg"><div class="seg-pip" style="background:var(--teal)"></div><div class="seg-n">热身</div><div class="seg-d">E2 轻松跑 2km</div><div class="seg-p">6:50–7:10</div></div>
+        <div class="seg"><div class="seg-pip" style="background:var(--amber)"></div><div class="seg-n">T段</div><div class="seg-d">乳酸门槛跑 3km，感觉"努力但可控"</div><div class="seg-p">5:20–5:28</div></div>
+        <div class="seg"><div class="seg-pip" style="background:var(--teal)"></div><div class="seg-n">放松</div><div class="seg-d">E3 慢跑 3km，心率降回145以下</div><div class="seg-p">7:00–7:30</div></div>
+      </div>
+
+      <div class="coach-tip" id="today-coach-tip">
+        <span>🤖</span>
+        <div id="today-tip-text"><strong>教练提示：</strong>先去体感Tab填写今天的Garmin数据和体感，教练会根据你的状态智能调整今日课表。</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AI LOADING -->
+  <div class="ai-loading" id="today-ai-loading">
+    <div class="ld"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+    <div class="ld-txt">综合Garmin数据+体感·分析调整中...</div>
+  </div>
+  <div class="ai-result" id="today-ai-result">
+    <div class="card">
+      <div class="card-body">
+        <div class="ai-hdr">
+          <div class="ai-icon">🤖</div>
+          <div><div class="ai-title">课表调整说明</div><div class="ai-time" id="today-ai-time"></div></div>
+        </div>
+        <div class="ai-body" id="today-ai-body"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- YESTERDAY LOG PROMPT -->
+<div class="sec" style="margin-top:4px">
+  <div class="sec-lbl">昨日训练记录</div>
+  <div class="card">
+    <div class="card-body">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:10px">填入昨日数据，让教练了解你今天的恢复状态</div>
+      <div class="post-inputs">
+        <div class="inp-g"><div class="inp-lbl">昨日距离 km</div><input class="inp" id="yd-dist" type="number" step="0.1" placeholder="8.0"></div>
+        <div class="inp-g"><div class="inp-lbl">昨日均心率 bpm</div><input class="inp" id="yd-hr" type="number" placeholder="142"></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="inp-lbl" style="margin-bottom:5px">昨日感觉</div>
+        <div class="feel-opts">
+          <div class="fopt" data-group="yd-feel" data-val="easy" onclick="selOpt(this)">轻松</div>
+          <div class="fopt" data-group="yd-feel" data-val="good" onclick="selOpt(this)">达标</div>
+          <div class="fopt warn" data-group="yd-feel" data-val="hard" onclick="selOpt(this)">吃力</div>
+          <div class="fopt bad" data-group="yd-feel" data-val="abort" onclick="selOpt(this)">提前结束</div>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="getAdjustedPlan()">🤖 生成今日调整建议</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════ STATS ════════ -->
+<div id="tc-stats" class="tc">
+<div class="sec">
+  <div class="sec-lbl">跑量进度</div>
+
+  <!-- RINGS -->
+  <div class="stat-hero">
+    <div class="stat-hero-title">
+      <span>本周 / 本月 / 本年</span>
+      <span style="font-size:11px;color:var(--text3)" id="stats-updated">手动更新</span>
+    </div>
+    <div class="ring-grid">
+      <!-- WEEK -->
+      <div class="ring-cell">
+        <div class="ring-wrap">
+          <svg class="donut" width="72" height="72" viewBox="0 0 72 72">
+            <circle class="donut-track" cx="36" cy="36" r="28"/>
+            <circle class="donut-fill" id="week-ring" cx="36" cy="36" r="28" stroke="var(--teal)" stroke-dasharray="175.9" stroke-dashoffset="88"/>
+          </svg>
+          <div class="ring-pct" id="week-pct" style="color:var(--teal)">50%</div>
+        </div>
+        <div class="ring-lbl">本周</div>
+        <div class="ring-vals" id="week-vals">0/42km</div>
+      </div>
+      <!-- MONTH -->
+      <div class="ring-cell">
+        <div class="ring-wrap">
+          <svg class="donut" width="72" height="72" viewBox="0 0 72 72">
+            <circle class="donut-track" cx="36" cy="36" r="28"/>
+            <circle class="donut-fill" id="month-ring" cx="36" cy="36" r="28" stroke="var(--purple)" stroke-dasharray="175.9" stroke-dashoffset="132"/>
+          </svg>
+          <div class="ring-pct" id="month-pct" style="color:var(--purple)">25%</div>
+        </div>
+        <div class="ring-lbl">本月</div>
+        <div class="ring-vals" id="month-vals">0/168km</div>
+      </div>
+      <!-- YEAR -->
+      <div class="ring-cell">
+        <div class="ring-wrap">
+          <svg class="donut" width="72" height="72" viewBox="0 0 72 72">
+            <circle class="donut-track" cx="36" cy="36" r="28"/>
+            <circle class="donut-fill" id="year-ring" cx="36" cy="36" r="28" stroke="var(--amber)" stroke-dasharray="175.9" stroke-dashoffset="158"/>
+          </svg>
+          <div class="ring-pct" id="year-pct" style="color:var(--amber)">10%</div>
+        </div>
+        <div class="ring-lbl">本年</div>
+        <div class="ring-vals" id="year-vals">0/2000km</div>
+      </div>
+    </div>
+
+    <!-- PROGRESS BARS -->
+    <div class="prog-row">
+      <div class="prog-label" style="font-size:11px">柏林马备战</div>
+      <div class="prog-track"><div class="prog-fill" id="berlin-prog" style="width:2%;background:var(--teal)"></div></div>
+      <div class="prog-val" id="berlin-prog-val" style="color:var(--teal)">0/840km</div>
+    </div>
+    <div class="prog-row">
+      <div class="prog-label" style="font-size:11px">距柏林马</div>
+      <div class="prog-track"><div class="prog-fill" id="time-prog" style="width:2%;background:var(--blue)"></div></div>
+      <div class="prog-val" id="time-prog-val" style="color:var(--blue)">137天</div>
+    </div>
+  </div>
+
+  <!-- ADD TRAINING LOG -->
+  <div class="sec-lbl" style="padding:0">录入训练</div>
+  <div class="add-log-form">
+    <div class="add-form-grid">
+      <div class="inp-g"><div class="inp-lbl">日期</div><input class="inp" id="log-date" type="date"></div>
+      <div class="inp-g"><div class="inp-lbl">距离 km</div><input class="inp" id="log-km" type="number" step="0.1" placeholder="10.0"></div>
+    </div>
+    <div class="add-form-row">
+      <div class="inp-g">
+        <div class="inp-lbl">类型</div>
+        <select class="inp" id="log-type">
+          <option value="E">E 轻松</option>
+          <option value="T">T 门槛</option>
+          <option value="MP">MP 马配</option>
+          <option value="LSD">LSD</option>
+          <option value="ST">爬楼机</option>
+          <option value="越野">越野</option>
+          <option value="比赛">比赛</option>
+        </select>
+      </div>
+      <div class="inp-g"><div class="inp-lbl">均心率</div><input class="inp" id="log-hr" type="number" placeholder="142"></div>
+      <div class="inp-g"><div class="inp-lbl">均配速</div><input class="inp" id="log-pace" type="text" placeholder="6:45"></div>
+    </div>
+    <button class="add-btn" onclick="addLog()">＋ 添加训练记录</button>
+  </div>
+
+  <!-- WEEKLY CHART -->
+  <div class="sec-lbl" style="padding:0">近8周跑量</div>
+  <div class="card" style="padding:14px 14px 10px">
+    <div class="bar-chart" id="week-chart"></div>
+    <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3)" id="week-chart-labels"></div>
+    <div style="margin-top:8px;display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text3)">
+      <div style="width:20px;border-top:1px dashed rgba(0,200,150,.4)"></div>目标周跑量
+    </div>
+  </div>
+
+  <!-- TRAINING LOG -->
+  <div class="sec-lbl" style="padding:10px 0 0">训练日志</div>
+  <div class="card">
+    <div class="card-body" id="log-list">
+      <div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)">还没有训练记录<br>在上方添加第一条</div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════ SCHEDULE ════════ -->
+<div id="tc-schedule" class="tc">
+<div class="sec">
+  <div class="view-row">
+    <div class="vt active" id="vt-week" onclick="setSchedView('week')">📋 整周</div>
+    <div class="vt" id="vt-day" onclick="setSchedView('day')">📌 单日</div>
+  </div>
+
+  <!-- WEEK VIEW -->
+  <div class="week-view-wrap show" id="week-view-wrap">
+    <div class="wchips" id="wchips"></div>
+    <div id="wv-content"></div>
+  </div>
+
+  <!-- DAY VIEW -->
+  <div class="day-view-wrap" id="day-view-wrap">
+    <div class="picker-card">
+      <div class="picker-row">
+        <input type="date" class="date-input" id="datePicker" value="2026-05-13" min="2026-05-11" max="2026-09-27">
+        <button class="go-btn" onclick="lookupDate()">查看</button>
+      </div>
+      <div class="qd-wrap">
+        <div class="qd today-q" onclick="setDate('today')">今天</div>
+        <div class="qd" onclick="setDate('tomorrow')">明天</div>
+        <div class="qd race" onclick="setDate('2026-06-13')">崇礼 6/13 🏔</div>
+        <div class="qd race" onclick="setDate('2026-09-27')">柏林马 9/27 🏅</div>
+      </div>
+    </div>
+    <div id="day-result"></div>
+  </div>
+</div>
+</div>
+
+<!-- ════════ FEEL ════════ -->
+<div id="tc-feel" class="tc">
+<div class="sec">
+  <div class="sec-lbl">⌚ Garmin 晨间数据</div>
+  <div class="card">
+    <div class="card-body">
+      <div style="font-size:11px;color:var(--text2);margin-bottom:12px">从 Garmin Connect App 首页抄入 · 只填早上起床时的数值</div>
+      <div class="garmin-grid">
+        <div class="gm">
+          <div class="gm-lbl">💜 HRV</div>
+          <input class="gm-input" id="g-hrv" type="number" placeholder="—" min="10" max="120" oninput="updateGarmin()">
+          <div class="gm-unit">ms</div>
+          <div class="gm-bar"><div class="gm-bar-fill" id="bar-hrv" style="width:0%;background:var(--purple)"></div></div>
+        </div>
+        <div class="gm">
+          <div class="gm-lbl">❤️ 静息心率</div>
+          <input class="gm-input" id="g-rhr" type="number" placeholder="—" min="40" max="80" oninput="updateGarmin()">
+          <div class="gm-unit">bpm · 基线55</div>
+          <div class="gm-bar"><div class="gm-bar-fill" id="bar-rhr" style="width:0%;background:var(--teal)"></div></div>
+        </div>
+        <div class="gm">
+          <div class="gm-lbl">😴 睡眠分数</div>
+          <input class="gm-input" id="g-sleep" type="number" placeholder="—" min="0" max="100" oninput="updateGarmin()">
+          <div class="gm-unit">分 · 70+为良好</div>
+          <div class="gm-bar"><div class="gm-bar-fill" id="bar-sleep" style="width:0%;background:var(--blue)"></div></div>
+        </div>
+        <div class="gm">
+          <div class="gm-lbl">⚡ 电量峰值</div>
+          <input class="gm-input" id="g-battery" type="number" placeholder="—" min="0" max="100" oninput="updateGarmin()">
+          <div class="gm-unit">% · 仅早晨值有效</div>
+          <div class="gm-bar"><div class="gm-bar-fill" id="bar-battery" style="width:0%;background:var(--amber)"></div></div>
+        </div>
+      </div>
+      <div class="gm-status" id="gm-status"></div>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="padding:10px 0 0">🌅 训练前体感</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="feel-label">🦵 腿部疲劳</div>
+      <div class="feel-opts">
+        <div class="fopt" data-group="legs" data-val="4" onclick="selOpt(this)">轻松有力</div>
+        <div class="fopt" data-group="legs" data-val="3" onclick="selOpt(this)">正常</div>
+        <div class="fopt warn" data-group="legs" data-val="2" onclick="selOpt(this)">有点沉</div>
+        <div class="fopt bad" data-group="legs" data-val="1" onclick="selOpt(this)">很沉</div>
+      </div>
+      <div class="feel-label">⚡ 整体精力</div>
+      <div class="feel-opts">
+        <div class="fopt" data-group="energy" data-val="4" onclick="selOpt(this)">充沛</div>
+        <div class="fopt" data-group="energy" data-val="3" onclick="selOpt(this)">一般</div>
+        <div class="fopt warn" data-group="energy" data-val="2" onclick="selOpt(this)">疲惫</div>
+        <div class="fopt bad" data-group="energy" data-val="1" onclick="selOpt(this)">很差</div>
+      </div>
+      <div class="feel-label">⚠️ 特殊情况</div>
+      <div class="fchecks" id="special-flags">
+        <div class="fcheck" data-flag="soreness" onclick="togCheck(this)">肌肉酸痛</div>
+        <div class="fcheck" data-flag="joint" onclick="togCheck(this)">关节不适</div>
+        <div class="fcheck" data-flag="sick" onclick="togCheck(this)">感冒迹象</div>
+        <div class="fcheck" data-flag="stress" onclick="togCheck(this)">压力大</div>
+        <div class="fcheck" data-flag="period" onclick="togCheck(this)">生理期</div>
+        <div class="fcheck" data-flag="heat" onclick="togCheck(this)">天气很热</div>
+        <div class="fcheck" data-flag="travel" onclick="togCheck(this)">旅途/时差</div>
+      </div>
+      <button class="submit-btn" id="feel-submit" onclick="submitFeel()">🤖 获取今日调整建议</button>
+    </div>
+  </div>
+
+  <div class="ai-loading" id="feel-loading">
+    <div class="ld"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+    <div class="ld-txt">综合分析中...</div>
+  </div>
+  <div class="ai-result" id="feel-result">
+    <div class="card">
+      <div class="card-body">
+        <div class="ai-hdr">
+          <div class="ai-icon">🤖</div>
+          <div><div class="ai-title">教练建议</div><div class="ai-time" id="feel-time"></div></div>
+        </div>
+        <div class="ai-body" id="feel-body"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- POST TRAINING -->
+  <div class="sec-lbl" style="padding:12px 0 0">🏁 训练后记录</div>
+  <div class="card">
+    <div class="card-body">
+      <div class="post-inputs">
+        <div class="inp-g"><div class="inp-lbl">实际距离 km</div><input class="inp" id="post-dist" type="number" step="0.1" placeholder="8.0"></div>
+        <div class="inp-g"><div class="inp-lbl">均配速 分:秒</div><input class="inp" id="post-pace" type="text" placeholder="6:52"></div>
+        <div class="inp-g"><div class="inp-lbl">均心率 bpm</div><input class="inp" id="post-hr" type="number" placeholder="142"></div>
+        <div class="inp-g"><div class="inp-lbl">最大心率</div><input class="inp" id="post-maxhr" type="number" placeholder="158"></div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div class="inp-lbl" style="margin-bottom:5px">跑时感觉</div>
+        <div class="feel-opts">
+          <div class="fopt" data-group="post-feel" data-val="easy" onclick="selOpt(this)">很轻松</div>
+          <div class="fopt" data-group="post-feel" data-val="good" onclick="selOpt(this)">达标</div>
+          <div class="fopt warn" data-group="post-feel" data-val="hard" onclick="selOpt(this)">有点吃力</div>
+          <div class="fopt bad" data-group="post-feel" data-val="abort" onclick="selOpt(this)">提前结束</div>
+        </div>
+      </div>
+      <textarea class="inp" id="post-note" rows="2" placeholder="补充说明：天气热/膝盖有点紧/心情很好..."></textarea>
+      <button class="submit-btn" onclick="submitPost()" style="margin-top:10px">📊 分析并给出明日建议</button>
+    </div>
+  </div>
+  <div class="ai-loading" id="post-loading"><div class="ld"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div><div class="ld-txt">分析训练数据...</div></div>
+  <div class="ai-result" id="post-result"><div class="card"><div class="card-body"><div class="ai-hdr"><div class="ai-icon">🤖</div><div><div class="ai-title">训练分析 · 明日建议</div><div class="ai-time" id="post-time"></div></div></div><div class="ai-body" id="post-body"></div></div></div></div>
+</div>
+</div>
+
+<!-- ════════ PROFILE ════════ -->
+<div id="tc-profile" class="tc">
+<div class="sec">
+  <div class="p-hero">
+    <div class="p-name">吴雅 · Wendy</div>
+    <div class="p-meta">52岁 · 女 · 160cm / 52kg · 静息心率55bpm · 珠海/香港</div>
+    <div class="p-stats">
+      <div class="pst"><div class="pst-v" style="color:var(--teal)">4:05</div><div class="pst-l">马拉松PB</div></div>
+      <div class="pst"><div class="pst-v">36.3</div><div class="pst-l">跑力值</div></div>
+      <div class="pst"><div class="pst-v">7,006</div><div class="pst-l">累计公里</div></div>
+      <div class="pst"><div class="pst-v" style="color:var(--amber)">~182</div><div class="pst-l">最大心率</div></div>
+      <div class="pst"><div class="pst-v">5场</div><div class="pst-l">马拉松</div></div>
+      <div class="pst"><div class="pst-v">57km</div><div class="pst-l">HK100 56K</div></div>
+    </div>
+  </div>
+  <div class="sec-lbl" style="padding:0">心率训练区间（实测校准）</div>
+  <div class="zones-card" style="margin-top:8px">
+    <div class="zrow"><div class="zbar" style="background:var(--blue)"></div><div class="zinfo"><div class="zname">E 轻松跑</div><div class="zdetail">130–150bpm · 全程可对话</div></div><div class="zpace">6:20–7:00</div></div>
+    <div class="zrow"><div class="zbar" style="background:var(--teal)"></div><div class="zinfo"><div class="zname">M 马拉松配速</div><div class="zdetail">150–160bpm · 柏林马执行区间</div></div><div class="zpace">5:41–5:48</div></div>
+    <div class="zrow"><div class="zbar" style="background:var(--amber)"></div><div class="zinfo"><div class="zname">T · 乳酸门槛</div><div class="zdetail">158–165bpm · 实测值</div></div><div class="zpace">5:20–5:28</div></div>
+    <div class="zrow"><div class="zbar" style="background:var(--red)"></div><div class="zinfo"><div class="zname">A/I 无氧·间歇</div><div class="zdetail">166–182bpm · 备战期不排入</div></div><div class="zpace">4:59–5:21</div></div>
+  </div>
+  <div class="sec-lbl" style="padding:0">马拉松成绩</div>
+  <div class="pb-card" style="margin-top:8px">
+    <div class="pb-row"><span class="pb-race">2025-03 无锡马</span><span class="pb-time">4:20:58</span><span class="badge" style="background:var(--bg3);color:var(--text2)">基准</span></div>
+    <div class="pb-row"><span class="pb-race">2025-10 芝加哥马</span><span class="pb-time">4:13:58</span><span class="badge" style="background:var(--ad);color:var(--amber)">+7分</span></div>
+    <div class="pb-row"><span class="pb-race">2025-11 上海马 🏅</span><span class="pb-time" style="color:var(--teal)">4:05:17</span><span class="badge" style="background:var(--td);color:var(--teal)">PB</span></div>
+    <div class="pb-row"><span class="pb-race">2026-03 武汉马</span><span class="pb-time">4:17:55</span><span class="badge" style="background:var(--rd);color:var(--red)">回落</span></div>
+    <div class="pb-row" style="background:rgba(0,200,150,.03)">
+      <span class="pb-race" style="color:var(--teal)">2026-09 柏林马 🎯</span>
+      <span class="pb-time" style="color:var(--teal)">目标 Sub-4</span>
+      <span class="badge" style="background:var(--td);color:var(--teal)">备战中</span>
+    </div>
+  </div>
+  <div class="sec-lbl" style="padding:0">年度赛事</div>
+  <div class="card" style="margin-top:8px;margin-bottom:20px">
+    <div class="card-body">
+      <div class="pb-row"><span class="pb-race">6/13 崇礼越野 48km</span><span class="badge" style="background:var(--ad);color:var(--amber)">训练赛</span></div>
+      <div class="pb-row"><span class="pb-race">9/27 柏林马拉松</span><span class="badge" style="background:var(--td);color:var(--teal)">主目标</span></div>
+      <div class="pb-row"><span class="pb-race">9/28 智利/秘鲁高原徒步</span><span class="badge" style="background:var(--bd);color:var(--blue)">主动恢复</span></div>
+      <div class="pb-row"><span class="pb-race" style="color:var(--purple)">2027/1 香港100越野 🎯</span><span class="badge" style="background:var(--pd);color:var(--purple)">积极备赛</span></div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ════════ DIARY ════════ -->
+<div id="tc-diary" class="tc">
+<div class="sec">
+  <div class="sec-lbl">📓 教练日记</div>
+
+  <!-- YEAR → MONTH → DAY CALENDAR -->
+  <div class="card" id="diary-cal-card">
+    <div class="card-body" style="padding:12px">
+
+      <!-- YEAR SELECTOR -->
+      <div class="diary-year-row" id="diary-year-row"></div>
+
+      <!-- MONTH GRID -->
+      <div id="diary-month-grid" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="diary-back-btn" onclick="diaryBack('year')">← 返回</div>
+          <div style="font-family:var(--fd);font-size:14px;font-weight:700" id="diary-year-label"></div>
+        </div>
+        <div class="diary-month-grid" id="diary-months"></div>
+      </div>
+
+      <!-- DAY GRID -->
+      <div id="diary-day-grid" style="display:none">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <div class="diary-back-btn" onclick="diaryBack('month')">← 返回</div>
+          <div style="font-family:var(--fd);font-size:14px;font-weight:700" id="diary-month-label"></div>
+        </div>
+        <div class="diary-day-grid" id="diary-days"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SELECTED DATE ENTRY -->
+  <div id="diary-entry" style="display:none">
+
+    <!-- DATE HEADER -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-family:var(--fd);font-size:18px;font-weight:700" id="diary-date-title"></div>
+        <div style="font-size:11px;color:var(--text2)" id="diary-date-sub"></div>
+      </div>
+      <div class="diary-back-btn" onclick="diaryBack('day')" style="padding:6px 12px">← 日历</div>
+    </div>
+
+    <!-- TRAINING SUMMARY (auto from log) -->
+    <div class="card" id="diary-training-card" style="margin-bottom:10px;display:none">
+      <div class="card-hdr">
+        <div style="font-size:12px;font-weight:600;color:var(--teal)">当日训练记录</div>
+      </div>
+      <div class="card-body" id="diary-training-content"></div>
+    </div>
+
+    <!-- PLAN FOR THAT DAY -->
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-hdr">
+        <div style="font-size:12px;font-weight:600;color:var(--text2)">📋 当日计划课表</div>
+      </div>
+      <div class="card-body" id="diary-plan-content">
+        <div style="font-size:12px;color:var(--text3)">无计划数据</div>
+      </div>
+    </div>
+
+    <!-- CONVERSATION -->
+    <div class="sec-lbl" style="padding:0">💬 与教练对话</div>
+    <div class="card" style="margin-bottom:10px">
+      <div class="card-body" style="padding:10px">
+        <div id="diary-msgs" style="min-height:60px;max-height:320px;overflow-y:auto;margin-bottom:10px;display:flex;flex-direction:column;gap:8px">
+          <div style="text-align:center;font-size:11px;color:var(--text3);padding:12px">选择日期后可以向教练提问</div>
+        </div>
+        <div style="display:flex;gap:7px">
+          <textarea class="inp" id="diary-input" rows="2" placeholder="问教练任何问题：今天训练强度合适吗？明天应该怎么跑？" style="flex:1;resize:none"></textarea>
+          <button onclick="sendDiaryMsg()" style="padding:0 14px;background:var(--teal);border:none;border-radius:var(--r);color:#000;font-weight:700;font-size:18px;cursor:pointer;flex-shrink:0">↑</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI LOADING -->
+    <div class="ai-loading" id="diary-loading">
+      <div class="ld"><div class="ldot"></div><div class="ldot"></div><div class="ldot"></div></div>
+      <div class="ld-txt">教练思考中...</div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+</div><!-- end .app -->
+
+<!-- BOTTOM NAV -->
+<div class="bnav">
+  <div class="ni active" onclick="switchNav('today',this)"><div class="ni-icon">✨</div><div class="ni-lbl">今日</div></div>
+  <div class="ni" onclick="switchNav('stats',this)"><div class="ni-icon">📊</div><div class="ni-lbl">统计</div></div>
+  <div class="ni" onclick="switchNav('schedule',this)"><div class="ni-icon">📅</div><div class="ni-lbl">课表</div></div>
+  <div class="ni" onclick="switchNav('diary',this)"><div class="ni-icon">📓</div><div class="ni-lbl">日记</div></div>
+  <div class="ni" onclick="switchNav('feel',this)"><div class="ni-icon">🌡</div><div class="ni-lbl">体感</div></div>
+  <div class="ni" onclick="switchNav('profile',this)"><div class="ni-icon">👤</div><div class="ni-lbl">档案</div></div>
+</div>
+
+<script>
+// Injected by Netlify Edge Function
+window.ANTHROPIC_KEY = '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';
+</script>
+<script>
+// ── FULL PLAN DATA ──
+// Each entry: date string → training object
+const PLAN = {};
+
+// Helper to add days
+function dateStr(base, offsetDays) {
+  const d = new Date(base);
+  d.setDate(d.getDate() + offsetDays);
+  return d.toISOString().split('T')[0];
+}
+
+const START = '2026-05-11'; // W1 Day 1 = Monday
+
+// Training templates
+const T = {
+  e2: (km, note='') => ({
+    type:'E', color:'var(--teal)', typeName:'E2 轻松跑',
+    badge:{bg:'var(--teal-dim)',color:'var(--teal)',text:'E'},
+    title:'轻松跑', dist:km+'km', pace:'6:40–7:00', hr:'≤150bpm',
+    structure:[
+      {color:'var(--teal)',name:'全程',desc:'E2 轻松跑 '+km+'km，全程可对话配速',pace:'6:40–7:00'}
+    ],
+    tip: note || '心率跟着感觉走，超过148bpm就主动放慢配速。珠海高温超过32°C可缩短至'+Math.max(6,km-2)+'km。'
+  }),
+  e2short: (km) => ({
+    type:'E', color:'var(--teal)', typeName:'E2 轻松跑（短）',
+    badge:{bg:'var(--teal-dim)',color:'var(--teal)',text:'E'},
+    title:'轻松短跑 · 激活为主', dist:km+'km', pace:'6:50–7:10', hr:'≤140bpm',
+    structure:[
+      {color:'var(--teal)',name:'全程',desc:'轻松激活，不追配速，明天/后天有重要训练',pace:'7:00–7:10'}
+    ],
+    tip:'今天是赛前/重要训练前的轻量激活，跑完腿要感觉比开始时更轻松。'
+  }),
+  t: (tkm, note='') => ({
+    type:'T', color:'var(--amber)', typeName:'T · 乳酸门槛跑',
+    badge:{bg:'var(--amber-dim)',color:'var(--amber)',text:'T · 门槛'},
+    title:'E2热身 + T门槛'+tkm+'km + E3放松',
+    dist:(2+tkm+3)+'km', pace:'T段5:20–5:28', hr:'T段158–165bpm',
+    structure:[
+      {color:'var(--teal)',name:'热身',desc:'E2 轻松跑 2km',pace:'6:50–7:10'},
+      {color:'var(--amber)',name:'T段',desc:'乳酸门槛跑 '+tkm+'km，感觉"努力但可控"',pace:'5:20–5:28'},
+      {color:'var(--teal)',name:'放松',desc:'E3 慢跑 3km，心率降回145以下',pace:'7:00–7:30'}
+    ],
+    tip: note || 'T段跑完最后1km配速掉超10秒→下次减1km。T段3分钟内心率降回145→强度合适。'
+  }),
+  tshort: () => ({
+    type:'T', color:'var(--amber)', typeName:'T · 乳酸门槛跑（减量版）',
+    badge:{bg:'var(--amber-dim)',color:'var(--amber)',text:'T短 · 门槛'},
+    title:'E2热身 + T短段3km + E3放松',
+    dist:'8km', pace:'T段5:25–5:30', hr:'T段158–163bpm',
+    structure:[
+      {color:'var(--teal)',name:'热身',desc:'E2 轻松跑 2km',pace:'7:00'},
+      {color:'var(--amber)',name:'T短段',desc:'门槛跑 3km，减量周保持神经激活',pace:'5:25–5:30'},
+      {color:'var(--teal)',name:'放松',desc:'E3 慢跑 3km',pace:'7:10'}
+    ],
+    tip:'减量周T课目的是保持神经肌肉激活，不是刺激。跑完应该感觉"还能再跑"。'
+  }),
+  lsd: (km, note='') => ({
+    type:'LSD', color:'var(--purple)', typeName:'LSD 长距离慢跑',
+    badge:{bg:'var(--purple-dim)',color:'var(--purple)',text:'LSD'},
+    title:'LSD '+km+'km',
+    dist:km+'km', pace:'6:45–7:10', hr:'138–148bpm',
+    structure:[
+      {color:'var(--teal)',name:'前半',desc:'E2 轻松建立节奏，不要起跑太快',pace:'6:50–7:10'},
+      {color:'var(--purple)',name:'后半',desc:'维持节奏，感受心率自然漂移',pace:'6:45–7:00'}
+    ],
+    tip: note || '跑完腿感受很重要——腿沉说明上周跑量偏高；腿轻说明恢复良好。每40分钟补水，10km后补碳水。'
+  }),
+  mplsd: (km, mpkm, note='') => ({
+    type:'MP-LSD', color:'var(--purple)', typeName:'MP-LSD 马拉松配速长距离',
+    badge:{bg:'var(--purple-dim)',color:'var(--purple)',text:'MP-LSD'},
+    title:'🎯 MP-LSD '+km+'km（含MP段'+mpkm+'km）',
+    dist:km+'km', pace:'MP段5:41–5:48', hr:'MP段150–158bpm',
+    structure:[
+      {color:'var(--teal)',name:'热身',desc:'E2 轻松跑 '+(Math.floor((km-mpkm)/2))+'km，建立节奏',pace:'6:50–7:10'},
+      {color:'var(--teal)',name:'MP段',desc:'🎯 马拉松目标配速 '+mpkm+'km',pace:'5:41–5:48'},
+      {color:'var(--purple)',name:'收尾',desc:'回E2节奏跑完剩余距离',pace:'6:50–7:00'}
+    ],
+    tip: note || 'MP段心率超过160说明目前5:41对你偏快，可调整到5:45–5:48。记录MP段均心率，这是最重要的数据点。'
+  }),
+  st: (min, light=false) => ({
+    type:'ST', color:'var(--blue)', typeName:'爬楼机训练',
+    badge:{bg:'var(--blue-dim)',color:'var(--blue)',text:'ST'},
+    title:'爬楼机'+(light?'（轻量）':''),
+    dist:'辅助', pace:'—', hr:'135–145bpm',
+    structure:[
+      {color:'var(--blue)',name:'爬楼机',desc:'匀速爬升，节奏稳定，双臂自然摆动',pace:min+'分钟'}
+    ],
+    tip: light ? '轻量激活，为明天训练保腿力。不要超过'+min+'分钟，心率不超过140bpm。'
+               : '爬楼机完成后做核心力量：单腿深蹲×12 + 臀桥×15 + 平板支撑×45秒，各3组。'
+  }),
+  sts: (min) => ({
+    type:'ST+S', color:'var(--blue)', typeName:'爬楼机 + 核心力量',
+    badge:{bg:'var(--blue-dim)',color:'var(--blue)',text:'ST+S'},
+    title:'爬楼机 + 核心力量',
+    dist:'辅助', pace:'—', hr:'135–145bpm',
+    structure:[
+      {color:'var(--blue)',name:'爬楼机',desc:'匀速 '+min+'分钟，心率135–145bpm',pace:min+'分钟'},
+      {color:'var(--purple)',name:'核心',desc:'单腿深蹲×12 + 臀桥×15 + 平板支撑×45秒，各3组',pace:'20分钟'}
+    ],
+    tip:'爬楼机先做，力量后做，顺序不要反。单腿深蹲膝盖不稳先从双腿开始。'
+  }),
+  rest: (note='') => ({
+    type:'REST', color:'var(--text3)', typeName:'完全休息',
+    isRest: true,
+    tip: note || '休息是训练的一部分。睡够8小时，补充蛋白质。可做10分钟轻柔拉伸，但不跑步不爬楼。'
+  }),
+  race: (name, km, elev, note='') => ({
+    type:'RACE', color:'var(--amber)', typeName:'比赛日',
+    isRace: true, raceName:name, raceKm:km, raceElev:elev,
+    tip: note
+  }),
+  prerace: (note='') => ({
+    type:'E', color:'var(--teal)', typeName:'赛前轻松跑',
+    badge:{bg:'var(--teal-dim)',color:'var(--teal)',text:'赛前'},
+    title:'赛前轻松激活', dist:'4–6km', pace:'7:00–7:30', hr:'≤138bpm',
+    structure:[
+      {color:'var(--teal)',name:'全程',desc:'极轻松慢跑，激活肌肉，感受状态',pace:'7:00–7:30'}
+    ],
+    tip: note || '赛前日不要跑太多，4km够了。目的是激活，不是训练。明天比赛加油！'
+  })
+};
+
+// ── W1 (5/11–5/17) ──
+PLAN['2026-05-11'] = {...T.e2(8,'昨天完成20km LSD，今天以恢复为主。心率偏高就放慢，不强求距离。'), week:'W1', phase:'建量期'};
+PLAN['2026-05-12'] = {...T.sts(25), week:'W1', phase:'建量期'};
+PLAN['2026-05-13'] = {...T.t(3,'W1第一次T课，3km感觉轻松也不要加量，下周再加。'), week:'W1', phase:'建量期'};
+PLAN['2026-05-14'] = {...T.rest('周三T课后必须有一天完全恢复，才能保证后续训练质量。'), week:'W1', phase:'建量期'};
+PLAN['2026-05-15'] = {...T.e2(10,'为周日LSD做储备，今天绝对不跑快。'), week:'W1', phase:'建量期'};
+PLAN['2026-05-16'] = {...T.st(25,true), week:'W1', phase:'建量期'};
+PLAN['2026-05-17'] = {...T.lsd(20,'W1 LSD维持20km，不增量。重点是心率全程压在145以下。'), week:'W1', phase:'建量期'};
+
+// ── W2 (5/18–5/24) ──
+PLAN['2026-05-18'] = {...T.e2(8), week:'W2', phase:'建量期'};
+PLAN['2026-05-19'] = {...T.sts(30), week:'W2', phase:'建量期'};
+PLAN['2026-05-20'] = {...T.t(4,'4km T是跑研社标准课量，感觉可以完成说明状态良好。'), week:'W2', phase:'建量期'};
+PLAN['2026-05-21'] = {...T.rest(), week:'W2', phase:'建量期'};
+PLAN['2026-05-22'] = {...T.e2(10), week:'W2', phase:'建量期'};
+PLAN['2026-05-23'] = {...T.st(25,true), week:'W2', phase:'建量期'};
+PLAN['2026-05-24'] = {...T.lsd(22,'跑完腿感受很重要——腿沉说明加量太快，下周维持；腿轻说明恢复很好，W3可继续加。'), week:'W2', phase:'建量期'};
+
+// ── W3 (5/25–5/31) ──
+PLAN['2026-05-25'] = {...T.e2(10), week:'W3', phase:'建量期'};
+PLAN['2026-05-26'] = {...T.sts(30), week:'W3', phase:'建量期'};
+PLAN['2026-05-27'] = {...T.t(5,'5km T是建量期上限，不要再加。最后1km配速掉超10秒就下周回到4km。'), week:'W3', phase:'建量期'};
+PLAN['2026-05-28'] = {...T.rest('W3强度最高的一周，周四完全休息不可省略。'), week:'W3', phase:'建量期'};
+PLAN['2026-05-29'] = {...T.e2(10,'为周日首次MP-LSD做准备，今天绝对不跑快。'), week:'W3', phase:'建量期'};
+PLAN['2026-05-30'] = {...T.st(20,true), week:'W3', phase:'建量期'};
+PLAN['2026-05-31'] = {...T.mplsd(22,3,'首次MP配速段！MP段3km跑完记录心率。超过160说明5:41偏快，可调到5:45–5:48，告诉教练。'), week:'W3', phase:'建量期'};
+
+// ── W4 (6/1–6/7) ──
+PLAN['2026-06-01'] = {...T.e2(8), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-02'] = {...T.tshort(), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-03'] = {...T.rest(), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-04'] = {...T.e2(8), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-05'] = {...T.st(20,true), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-06'] = {...T.e2short(6), week:'W4', phase:'建量期·减量'};
+PLAN['2026-06-07'] = {...T.lsd(16,'崇礼越野前最后一次长跑。跑完腿应该很轻松，为6/13蓄力。'), week:'W4', phase:'建量期·减量'};
+
+// ── W5 赛前6天+比赛日 (6/8–6/14) ──
+PLAN['2026-06-08'] = {...T.e2(6,'崇礼赛前第5天，轻松活动即可，不追配速，不追心率。'), week:'W5', phase:'崇礼赛前'};
+PLAN['2026-06-09'] = {...T.rest('赛前休息，睡够，多喝水，补充碳水。'), week:'W5', phase:'崇礼赛前'};
+PLAN['2026-06-10'] = {...T.rest('赛前休息。可做轻柔拉伸、泡脚。'), week:'W5', phase:'崇礼赛前'};
+PLAN['2026-06-11'] = {...T.prerace('赛前激活，轻松跑4km感受腿部状态。'), week:'W5', phase:'崇礼赛前'};
+PLAN['2026-06-12'] = {...T.rest('赛前一天完全休息。装备检查，营养补充，早点睡。'), week:'W5', phase:'崇礼赛前'};
+PLAN['2026-06-13'] = {...T.race('🏔 崇礼越野赛',48,2152,'训练赛，心态轻松跑。爬升2152m，全程按体感控制配速，不冲成绩。后半段注意保留体力，下山保护膝盖。'), week:'W5', phase:'崇礼越野'};
+PLAN['2026-06-14'] = {...T.rest('比赛后第一天，完全休息。腿部按摩，补充蛋白质和碳水，多睡。'), week:'W5', phase:'崇礼赛后'};
+
+// ── W6 恢复周 (6/15–6/21) ──
+PLAN['2026-06-15'] = {...T.rest('崇礼越野后强制恢复。腿沉就继续休息，不要急着跑。'), week:'W6', phase:'恢复周'};
+PLAN['2026-06-16'] = {...T.rest(), week:'W6', phase:'恢复周'};
+PLAN['2026-06-17'] = {...T.e2(6,'恢复周第一跑，极轻松，心率不超过140。腿不舒服就停。'), week:'W6', phase:'恢复周'};
+PLAN['2026-06-18'] = {...T.rest(), week:'W6', phase:'恢复周'};
+PLAN['2026-06-19'] = {...T.e2(8,'恢复周，轻松为主。'), week:'W6', phase:'恢复周'};
+PLAN['2026-06-20'] = {...T.st(20,true), week:'W6', phase:'恢复周'};
+PLAN['2026-06-21'] = {...T.lsd(16,'恢复周LSD，距离短，配速慢，心率压在140以下。'), week:'W6', phase:'恢复周'};
+
+// ── W7–W14 质量期 (6/22–8/16) ──
+// W7
+PLAN['2026-06-22'] = {...T.e2(10), week:'W7', phase:'质量期'};
+PLAN['2026-06-23'] = {...T.sts(30), week:'W7', phase:'质量期'};
+PLAN['2026-06-24'] = {...T.t(4), week:'W7', phase:'质量期'};
+PLAN['2026-06-25'] = {...T.rest(), week:'W7', phase:'质量期'};
+PLAN['2026-06-26'] = {...T.e2(10), week:'W7', phase:'质量期'};
+PLAN['2026-06-27'] = {...T.st(25,true), week:'W7', phase:'质量期'};
+PLAN['2026-06-28'] = {...T.mplsd(24,4,'质量期第一个24km MP-LSD，MP段加到4km。'), week:'W7', phase:'质量期'};
+// W8
+PLAN['2026-06-29'] = {...T.e2(10), week:'W8', phase:'质量期'};
+PLAN['2026-06-30'] = {...T.sts(30), week:'W8', phase:'质量期'};
+PLAN['2026-07-01'] = {...T.t(5), week:'W8', phase:'质量期'};
+PLAN['2026-07-02'] = {...T.rest(), week:'W8', phase:'质量期'};
+PLAN['2026-07-03'] = {...T.e2(10), week:'W8', phase:'质量期'};
+PLAN['2026-07-04'] = {...T.st(25,true), week:'W8', phase:'质量期'};
+PLAN['2026-07-05'] = {...T.mplsd(26,6), week:'W8', phase:'质量期'};
+// W9
+PLAN['2026-07-06'] = {...T.e2(10), week:'W9', phase:'质量期'};
+PLAN['2026-07-07'] = {...T.sts(30), week:'W9', phase:'质量期'};
+PLAN['2026-07-08'] = {...T.t(5), week:'W9', phase:'质量期'};
+PLAN['2026-07-09'] = {...T.rest(), week:'W9', phase:'质量期'};
+PLAN['2026-07-10'] = {...T.e2(12), week:'W9', phase:'质量期'};
+PLAN['2026-07-11'] = {...T.st(25,true), week:'W9', phase:'质量期'};
+PLAN['2026-07-12'] = {...T.mplsd(26,8), week:'W9', phase:'质量期'};
+// W10
+PLAN['2026-07-13'] = {...T.e2(10), week:'W10', phase:'质量期'};
+PLAN['2026-07-14'] = {...T.sts(30), week:'W10', phase:'质量期'};
+PLAN['2026-07-15'] = {...T.t(5), week:'W10', phase:'质量期'};
+PLAN['2026-07-16'] = {...T.rest(), week:'W10', phase:'质量期'};
+PLAN['2026-07-17'] = {...T.e2(12), week:'W10', phase:'质量期'};
+PLAN['2026-07-18'] = {...T.st(25,true), week:'W10', phase:'质量期'};
+PLAN['2026-07-19'] = {...T.mplsd(28,10), week:'W10', phase:'质量期'};
+// W11
+PLAN['2026-07-20'] = {...T.e2(10), week:'W11', phase:'质量期'};
+PLAN['2026-07-21'] = {...T.sts(30), week:'W11', phase:'质量期'};
+PLAN['2026-07-22'] = {...T.t(5), week:'W11', phase:'质量期'};
+PLAN['2026-07-23'] = {...T.rest(), week:'W11', phase:'质量期'};
+PLAN['2026-07-24'] = {...T.e2(12), week:'W11', phase:'质量期'};
+PLAN['2026-07-25'] = {...T.st(25,true), week:'W11', phase:'质量期'};
+PLAN['2026-07-26'] = {...T.mplsd(28,12,'MP段12km，这是马拉松专项耐力的核心课。心率全程记录，和上海PB时对比。'), week:'W11', phase:'质量期'};
+// W12
+PLAN['2026-07-27'] = {...T.e2(10), week:'W12', phase:'质量期'};
+PLAN['2026-07-28'] = {...T.sts(30), week:'W12', phase:'质量期'};
+PLAN['2026-07-29'] = {...T.t(5), week:'W12', phase:'质量期'};
+PLAN['2026-07-30'] = {...T.rest(), week:'W12', phase:'质量期'};
+PLAN['2026-07-31'] = {...T.e2(12), week:'W12', phase:'质量期'};
+PLAN['2026-08-01'] = {...T.st(25,true), week:'W12', phase:'质量期'};
+PLAN['2026-08-02'] = {...T.mplsd(30,14), week:'W12', phase:'质量期'};
+// W13
+PLAN['2026-08-03'] = {...T.e2(10), week:'W13', phase:'质量期'};
+PLAN['2026-08-04'] = {...T.sts(30), week:'W13', phase:'质量期'};
+PLAN['2026-08-05'] = {...T.t(5), week:'W13', phase:'质量期'};
+PLAN['2026-08-06'] = {...T.rest(), week:'W13', phase:'质量期'};
+PLAN['2026-08-07'] = {...T.e2(12), week:'W13', phase:'质量期'};
+PLAN['2026-08-08'] = {...T.st(25,true), week:'W13', phase:'质量期'};
+PLAN['2026-08-09'] = {...T.mplsd(30,16), week:'W13', phase:'质量期'};
+// W14
+PLAN['2026-08-10'] = {...T.e2(10), week:'W14', phase:'质量期'};
+PLAN['2026-08-11'] = {...T.sts(30), week:'W14', phase:'质量期'};
+PLAN['2026-08-12'] = {...T.t(5), week:'W14', phase:'质量期'};
+PLAN['2026-08-13'] = {...T.rest(), week:'W14', phase:'质量期'};
+PLAN['2026-08-14'] = {...T.e2(12), week:'W14', phase:'质量期'};
+PLAN['2026-08-15'] = {...T.st(25,true), week:'W14', phase:'质量期'};
+PLAN['2026-08-16'] = {...T.mplsd(30,18,'质量期最后一次长距离，MP段18km。感受马拉松配速的稳定性。'), week:'W14', phase:'质量期'};
+
+// ── W15–W17 巅峰期 (8/17–9/6) ──
+// W15
+PLAN['2026-08-17'] = {...T.e2(12), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-18'] = {...T.sts(30), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-19'] = {...T.t(5), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-20'] = {...T.rest(), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-21'] = {...T.e2(12), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-22'] = {...T.st(25,true), week:'W15', phase:'巅峰期'};
+PLAN['2026-08-23'] = {...T.mplsd(32,20,'巅峰期第一个32km！MP段20km，这是整个计划最重要的训练之一。'), week:'W15', phase:'巅峰期'};
+// W16
+PLAN['2026-08-24'] = {...T.e2(10), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-25'] = {...T.sts(30), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-26'] = {...T.t(5), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-27'] = {...T.rest(), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-28'] = {...T.e2(12), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-29'] = {...T.st(25,true), week:'W16', phase:'巅峰期'};
+PLAN['2026-08-30'] = {...T.mplsd(32,22,'巅峰期第二个32km，MP段22km。最后验证马拉松配速可持续性。'), week:'W16', phase:'巅峰期'};
+// W17
+PLAN['2026-08-31'] = {...T.e2(10), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-01'] = {...T.sts(25), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-02'] = {...T.t(4), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-03'] = {...T.rest(), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-04'] = {...T.e2(10), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-05'] = {...T.st(20,true), week:'W17', phase:'巅峰期'};
+PLAN['2026-09-06'] = {...T.mplsd(26,16,'巅峰期最后一个长距离，开始减量前的最后刺激。'), week:'W17', phase:'巅峰期'};
+
+// ── W18–W20 减量赛前 (9/7–9/26) ──
+// W18
+PLAN['2026-09-07'] = {...T.e2(10), week:'W18', phase:'减量期'};
+PLAN['2026-09-08'] = {...T.sts(20), week:'W18', phase:'减量期'};
+PLAN['2026-09-09'] = {...T.t(3), week:'W18', phase:'减量期'};
+PLAN['2026-09-10'] = {...T.rest(), week:'W18', phase:'减量期'};
+PLAN['2026-09-11'] = {...T.e2(8), week:'W18', phase:'减量期'};
+PLAN['2026-09-12'] = {...T.st(20,true), week:'W18', phase:'减量期'};
+PLAN['2026-09-13'] = {...T.lsd(20,'减量第一周LSD，距离从32km降至20km，感受腿部轻盈。'), week:'W18', phase:'减量期'};
+// W19
+PLAN['2026-09-14'] = {...T.e2(8), week:'W19', phase:'减量期'};
+PLAN['2026-09-15'] = {...T.sts(20), week:'W19', phase:'减量期'};
+PLAN['2026-09-16'] = {...T.t(3), week:'W19', phase:'减量期'};
+PLAN['2026-09-17'] = {...T.rest(), week:'W19', phase:'减量期'};
+PLAN['2026-09-18'] = {...T.e2(6), week:'W19', phase:'减量期'};
+PLAN['2026-09-19'] = {...T.st(15,true), week:'W19', phase:'减量期'};
+PLAN['2026-09-20'] = {...T.mplsd(14,8,'减量期最后一次MP跑，感受目标配速，建立信心。'), week:'W19', phase:'减量期'};
+// W20 赛前最后一周
+PLAN['2026-09-21'] = {...T.e2(6,'最后一周，轻松为主，保持感觉。'), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-22'] = {...T.rest(), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-23'] = {...T.e2short(4), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-24'] = {...T.rest('赛前3天休息。装备检查，柏林气候研究，睡好。'), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-25'] = {...T.prerace('赛前一天轻松跑4km，感受腿部状态，建立节奏感。'), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-26'] = {...T.rest('赛前一天完全休息。早点睡，装备全部备好，番茄意面晚餐补碳水。'), week:'W20', phase:'赛前最后周'};
+PLAN['2026-09-27'] = {...T.race('🏅 柏林马拉松',42.195,0,'目标 Sub-4:00！\n\n配速策略：前5km 5:48–5:52，中段5:43–5:45，心率全程压在153bpm以下。\n\n起跑不要冲，人多凉快肾上腺素高，前10km心率一旦超过155立刻主动减速。\n\n加油Wendy！'), week:'W20', phase:'柏林马拉松'};
+
+
+// ── CONSTANTS ──
+const PHASE_COLOR = {
+  '建量期':'var(--teal)','建量期·减量':'var(--teal)',
+  '崇礼赛前':'var(--amber)','崇礼越野':'var(--amber)','崇礼赛后':'var(--amber)',
+  '恢复周':'var(--blue)','质量期':'var(--purple)',
+  '巅峰期':'var(--red)','减量期':'var(--amber)',
+  '赛前最后周':'var(--red)','柏林马拉松':'var(--teal)'
+};
+const WEEKDAYS=['日','一','二','三','四','五','六'];
+const PLAN_START=new Date('2026-05-11');
+const PLAN_END=new Date('2026-09-27');
+const TOTAL_DAYS=140;
+const BERLIN=new Date('2026-09-27');
+
+const WEEKS=[
+  {id:'W1',label:'W1',dates:['2026-05-11','2026-05-17'],name:'恢复启动',km:'42km',phase:'建量期',focus:'LSD后恢复为主，T课3km试水，LSD维持20km'},
+  {id:'W2',label:'W2',dates:['2026-05-18','2026-05-24'],name:'结构稳定',km:'45km',phase:'建量期',focus:'T课加到4km，LSD加到22km'},
+  {id:'W3',label:'W3',dates:['2026-05-25','2026-05-31'],name:'强度引入·首次MP',km:'48km',phase:'建量期',focus:'T课5km封顶，周日首次嵌入3km MP配速段'},
+  {id:'W4',label:'W4',dates:['2026-06-01','2026-06-07'],name:'崇礼赛前减量',km:'36km',phase:'建量期',focus:'为6/13崇礼越野蓄力，LSD缩至16km'},
+  {id:'W5',label:'W5 🏔',dates:['2026-06-08','2026-06-14'],name:'崇礼越野赛',km:'赛事',phase:'赛事周',focus:'6/13崇礼越野48km，训练赛心态',isRace:true},
+  {id:'W6',label:'W6',dates:['2026-06-15','2026-06-21'],name:'强制恢复周',km:'28km',phase:'恢复周',focus:'越野后强制恢复，LSD缩至16km'},
+  {id:'W7',label:'W7',dates:['2026-06-22','2026-06-28'],name:'质量期启动',km:'48km',phase:'质量期',focus:'MP-LSD 24km（MP段4km）'},
+  {id:'W8',label:'W8',dates:['2026-06-29','2026-07-05'],name:'MP段加长',km:'50km',phase:'质量期',focus:'MP-LSD 26km（MP段6km）'},
+  {id:'W9',label:'W9',dates:['2026-07-06','2026-07-12'],name:'MP段加长',km:'52km',phase:'质量期',focus:'MP-LSD 26km（MP段8km）'},
+  {id:'W10',label:'W10',dates:['2026-07-13','2026-07-19'],name:'MP段加长',km:'53km',phase:'质量期',focus:'MP-LSD 28km（MP段10km）'},
+  {id:'W11',label:'W11',dates:['2026-07-20','2026-07-26'],name:'MP段12km',km:'54km',phase:'质量期',focus:'MP-LSD 28km（MP段12km），马拉松专项核心'},
+  {id:'W12',label:'W12',dates:['2026-07-27','2026-08-02'],name:'MP段14km',km:'55km',phase:'质量期',focus:'MP-LSD 30km（MP段14km）'},
+  {id:'W13',label:'W13',dates:['2026-08-03','2026-08-09'],name:'MP段16km',km:'55km',phase:'质量期',focus:'MP-LSD 30km（MP段16km）'},
+  {id:'W14',label:'W14',dates:['2026-08-10','2026-08-16'],name:'质量期收尾',km:'54km',phase:'质量期',focus:'MP-LSD 30km（MP段18km）'},
+  {id:'W15',label:'W15',dates:['2026-08-17','2026-08-23'],name:'巅峰·32km',km:'58km',phase:'巅峰期',focus:'第一个32km MP-LSD（MP段20km）'},
+  {id:'W16',label:'W16',dates:['2026-08-24','2026-08-30'],name:'巅峰·32km',km:'59km',phase:'巅峰期',focus:'第二个32km MP-LSD（MP段22km）'},
+  {id:'W17',label:'W17',dates:['2026-08-31','2026-09-06'],name:'巅峰收尾',km:'55km',phase:'巅峰期',focus:'MP-LSD 26km（MP段16km）'},
+  {id:'W18',label:'W18',dates:['2026-09-07','2026-09-13'],name:'减量启动',km:'42km',phase:'减量期',focus:'LSD降至20km'},
+  {id:'W19',label:'W19',dates:['2026-09-14','2026-09-20'],name:'持续减量',km:'32km',phase:'减量期',focus:'MP-LSD 14km（MP段8km）'},
+  {id:'W20',label:'W20 🏅',dates:['2026-09-21','2026-09-27'],name:'赛前最后周',km:'赛前',phase:'赛前',focus:'轻松保状态，9/27柏林马！',isRace:true},
+];
+
+// ── TRAINING LOG (in-memory) ──
+let trainingLog = [];
+
+// ── LOAD TRAINING LOG FROM LOCALSTORAGE ──
+function loadTrainingLog(){
+  try{
+    const saved=localStorage.getItem('wendy_training_log');
+    if(saved){trainingLog=JSON.parse(saved);}
+  }catch(e){console.log('Load log error:',e);}
+}
+function saveTrainingLog(){
+  try{localStorage.setItem('wendy_training_log',JSON.stringify(trainingLog));}
+  catch(e){console.log('Save log error:',e);}
+}
+
+// ── SELECTIONS ──
+const sel = {};
+function selOpt(el){
+  const g=el.dataset.group;
+  document.querySelectorAll(`[data-group="${g}"]`).forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
+  sel[g]=el.dataset.val;
+}
+function togCheck(el){el.classList.toggle('sel');}
+
+// ── INIT ──
+window.onload=()=>{
+  const now=new Date();
+  document.getElementById('hdr-date').textContent=now.getFullYear()+'.'+String(now.getMonth()+1).padStart(2,'0')+'.'+String(now.getDate()).padStart(2,'0');
+  document.getElementById('cd-days').textContent=Math.max(0,Math.ceil((BERLIN-now)/86400000));
+  document.getElementById('log-date').value=now.toISOString().split('T')[0];
+  document.getElementById('datePicker').value=now.toISOString().split('T')[0];
+  loadTrainingLog();
+  updateTodayPlan();
+  buildWchips();
+  const todayStr=now.toISOString().split('T')[0];
+  let wid='W1';
+  WEEKS.forEach(w=>{if(todayStr>=w.dates[0]&&todayStr<=w.dates[1])wid=w.id;});
+  showWeek(wid);
+  updateStats();
+};
+
+// ── TABS ──
+function switchTab(name,el){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tc-'+name).classList.add('active');
+  el.classList.add('active');
+}
+function switchNav(name,el){
+  document.querySelectorAll('.tc').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.ni').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tc-'+name).classList.add('active');
+  el.classList.add('active');
+  document.querySelectorAll('.tab').forEach(t=>{if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes("'"+name+"'"))t.classList.add('active');});
+}
+
+// ── TODAY PLAN ──
+function updateTodayPlan(){
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tr=PLAN[todayStr];
+  if(!tr)return;
+  const el=document.getElementById('today-type-name');
+  if(el)el.textContent=tr.typeName||'';
+  if(el)el.style.color=tr.color||'var(--teal)';
+  document.getElementById('plan-orig-title').textContent=tr.isRest?'完全休息日':tr.isRace?tr.raceName:tr.title||'';
+  document.getElementById('plan-orig-detail').textContent=tr.isRest?tr.tip||'':tr.isRace?tr.raceKm+'km 训练赛':(tr.dist||'')+'  '+( tr.hr||'');
+  if(tr.dist&&tr.dist!=='辅助'){document.getElementById('td-dist').innerHTML=tr.dist.replace('km','')+'<span class="munit">km</span>';}
+  if(tr.pace)document.getElementById('td-pace').innerHTML=tr.pace.split('–')[0]+'<span class="munit">/k</span>';
+  if(tr.hr)document.getElementById('td-hr').textContent=tr.hr;
+}
+
+// ── GARMIN ──
+function updateGarmin(){
+  const hrv=parseInt(document.getElementById('g-hrv').value)||0;
+  const rhr=parseInt(document.getElementById('g-rhr').value)||0;
+  const sleep=parseInt(document.getElementById('g-sleep').value)||0;
+  const battery=parseInt(document.getElementById('g-battery').value)||0;
+  if(hrv)document.getElementById('bar-hrv').style.width=Math.min(100,hrv/80*100)+'%';
+  if(rhr){const s=Math.max(0,Math.min(100,(70-rhr)/15*100));document.getElementById('bar-rhr').style.width=s+'%';document.getElementById('bar-rhr').style.background=rhr<=57?'var(--teal)':rhr<=62?'var(--amber)':'var(--red)';}
+  if(sleep)document.getElementById('bar-sleep').style.width=sleep+'%';
+  if(battery)document.getElementById('bar-battery').style.width=battery+'%';
+  const status=document.getElementById('gm-status');
+  const issues=[],goods=[];
+  if(rhr>60)issues.push('静息心率'+rhr+'bpm偏高');
+  else if(rhr&&rhr<=55)goods.push('静息心率'+rhr+'bpm良好');
+  if(sleep&&sleep<60)issues.push('睡眠分数'+sleep+'偏低');
+  else if(sleep&&sleep>=75)goods.push('睡眠'+sleep+'分良好');
+  if(hrv||rhr||sleep||battery){
+    if(issues.length>=2){status.className='gm-status bad show';status.innerHTML='<strong>⚠️ 多项数据提示疲劳：</strong>'+issues.join('，')+'。建议降低今日训练强度。';}
+    else if(issues.length===1){status.className='gm-status warn show';status.innerHTML='<strong>注意：</strong>'+issues[0]+'。稍微保守一些。';}
+    else if(goods.length){status.className='gm-status good show';status.innerHTML='<strong>✅ 客观指标良好：</strong>'+goods.join('，')+'。支持正常训练。';}
+    else{status.className='gm-status show';status.style.background='var(--bg3)';status.style.border='1px solid var(--border)';status.innerHTML='数据已录入，点击下方按钮获取综合分析。';}
+  }
+  // Update readiness on today tab
+  let score=100;
+  if(rhr>60)score-=20; if(rhr>65)score-=15;
+  if(sleep>0&&sleep<60)score-=25; else if(sleep>0&&sleep<70)score-=10;
+  score=Math.max(10,Math.min(100,score));
+  const circumference=125.7;
+  const offset=circumference-(score/100*circumference);
+  document.getElementById('readiness-ring').style.strokeDashoffset=offset;
+  document.getElementById('readiness-score').textContent=score+'%';
+  const color=score>=80?'var(--teal)':score>=60?'var(--amber)':'var(--red)';
+  document.getElementById('readiness-score').style.color=color;
+  document.getElementById('readiness-ring').style.stroke=color;
+}
+
+// ── WENDY PROFILE ──
+const WENDY_PROFILE=`你是 Wendy（吴雅）的专属跑步教练AI。
+【档案】52岁女性，160cm/52kg，静息心率基线55bpm，最大心率约182bpm
+【训练体系】跑研社：E轻松6:20-7:00/130-150bpm；M马配5:41-5:48/150-160bpm；T乳酸门槛5:20-5:28/158-165bpm（实测）
+【目标】6/13崇礼越野48km训练赛；9/27柏林马Sub-4；2027/1香港100越野完赛
+【PB】上海马4:05:17（均心率156bpm）；武汉马4:17:55（158bpm）
+【调整规则】静息心率>60→降强度；>63→建议休息；睡眠<60→T改E；感冒→停训；生理期→降20%；高温>32°C→缩短距离；身体电量只看早晨峰值，傍晚低值正常不影响训练
+回复简洁直接，中文，给具体数字（距离/配速/心率），不要废话。`;
+
+// ── AI CALLS ──
+async function callClaude(prompt, loadingId, resultId, bodyId, timeId){
+  document.getElementById(loadingId).classList.add('show');
+  document.getElementById(resultId).classList.remove('show');
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:800,system:WENDY_PROFILE,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(!res.ok){throw new Error('API错误 '+res.status+': '+(data.error&&data.error.message||JSON.stringify(data)));}
+    const text=data.content.map(b=>b.text||'').join('');
+    document.getElementById(loadingId).classList.remove('show');
+    document.getElementById(bodyId).textContent=text;
+    document.getElementById(timeId).textContent=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById(resultId).classList.add('show');
+    return text;
+  }catch(e){
+    document.getElementById(loadingId).classList.remove('show');
+    document.getElementById(bodyId).textContent='错误：'+e.message+' (请检查网络或API Key)';
+    document.getElementById(resultId).classList.add('show');
+    return '';
+  }
+}
+
+async function submitFeel(){
+  const legs=sel['legs'],energy=sel['energy'];
+  if(!legs||!energy){alert('请填写腿部疲劳和精力两项');return;}
+  const hrv=document.getElementById('g-hrv').value;
+  const rhr=document.getElementById('g-rhr').value;
+  const sleep=document.getElementById('g-sleep').value;
+  const flags=[...document.querySelectorAll('.fcheck.sel')].map(f=>f.dataset.flag);
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tr=PLAN[todayStr];
+  const planDesc=tr?(tr.isRest?'完全休息':tr.title||tr.typeName):'E2轻松跑8km';
+  const prompt=`Wendy今天体感：
+Garmin数据：${hrv?'HRV '+hrv+'ms':''}${rhr?' 静息心率'+rhr+'bpm（基线55）':''}${sleep?' 睡眠'+sleep+'分':''}
+腿部疲劳：${{4:'轻松有力',3:'正常',2:'有点沉',1:'很沉很重'}[legs]}
+精力：${{4:'充沛',3:'一般',2:'疲惫',1:'很差'}[energy]}
+${flags.length?'特殊：'+flags.join('、'):''}
+今日原计划：${planDesc}
+请给出：1.状态评估 2.具体调整方案（如需）3.一句执行提示`;
+  document.getElementById('feel-submit').disabled=true;
+  const text=await callClaude(prompt,'feel-loading','feel-result','feel-body','feel-time');
+  document.getElementById('feel-submit').disabled=false;
+  // Update today tab
+  if(text){
+    const first=text.split('\n').find(l=>l.trim())||text;
+    document.getElementById('today-tip-text').innerHTML='<strong>教练建议（已更新）：</strong>'+first;
+    document.getElementById('plan-adj-box').style.display='block';
+    document.getElementById('plan-adj-title').textContent=first.length>40?first.substring(0,40)+'...':first;
+  }
+}
+
+async function getAdjustedPlan(){
+  const dist=document.getElementById('yd-dist').value;
+  const hr=document.getElementById('yd-hr').value;
+  const feel=sel['yd-feel'];
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tr=PLAN[todayStr];
+  const planDesc=tr?(tr.isRest?'完全休息':tr.title||tr.typeName):'T门槛跑';
+  const prompt=`Wendy昨日训练：${dist?dist+'km':'距离未填'}，均心率${hr||'未填'}bpm，感觉${feel?{easy:'轻松',good:'达标',hard:'有点吃力',abort:'提前结束'}[feel]:'未填'}
+今日原计划：${planDesc}
+请根据昨日恢复情况给出今日调整建议，包括具体距离/配速/心率目标。`;
+  await callClaude(prompt,'today-ai-loading','today-ai-result','today-ai-body','today-ai-time');
+}
+
+async function submitPost(){
+  const dist=document.getElementById('post-dist').value;
+  const pace=document.getElementById('post-pace').value;
+  const hr=document.getElementById('post-hr').value;
+  const maxhr=document.getElementById('post-maxhr').value;
+  const feel=sel['post-feel'];
+  const note=document.getElementById('post-note').value;
+  if(!dist&&!hr){alert('请至少填入距离和心率');return;}
+  // Auto add to log
+  if(dist){
+    const t=PLAN[new Date().toISOString().split('T')[0]];
+    addLogEntry(new Date().toISOString().split('T')[0],parseFloat(dist),t?t.type||'E':'E',hr,pace);
+  }
+  const todayStr=new Date().toISOString().split('T')[0];
+  const tr=PLAN[todayStr];
+  const d=new Date(todayStr+'T00:00:00');
+  d.setDate(d.getDate()+1);
+  const tmrStr=d.toISOString().split('T')[0];
+  const tmr=PLAN[tmrStr];
+  const prompt=`Wendy今日完成：${dist||'?'}km，配速${pace||'?'}，均心率${hr||'?'}bpm，最大心率${maxhr||'?'}bpm，感觉${feel?{easy:'很轻松',good:'达标',hard:'有点吃力',abort:'提前结束'}[feel]:'未填'}${note?'。'+note:''}
+原计划：${tr?tr.title||tr.typeName:'—'}
+明日原计划：${tmr?tmr.isRest?'完全休息':tmr.title||tmr.typeName:'—'}
+请：1.分析今日完成质量 2.判断明日是否需要调整 3.给出明日具体方案`;
+  await callClaude(prompt,'post-loading','post-result','post-body','post-time');
+}
+
+// ── STATS ──
+function updateStats(){
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+  // Week boundaries (Mon-Sun)
+  const dow=now.getDay();
+  const weekStart=new Date(now); weekStart.setDate(now.getDate()-(dow===0?6:dow-1));
+  const weekStartStr=weekStart.toISOString().split('T')[0];
+  const monthStartStr=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0')+'-01';
+  const yearStartStr=now.getFullYear()+'-01-01';
+  const berlinStartStr='2026-05-11';
+
+  let weekKm=0,monthKm=0,yearKm=0,berlinKm=0;
+  trainingLog.forEach(e=>{
+    if(e.date>=weekStartStr&&e.date<=todayStr)weekKm+=e.km;
+    if(e.date>=monthStartStr&&e.date<=todayStr)monthKm+=e.km;
+    if(e.date>=yearStartStr&&e.date<=todayStr)yearKm+=e.km;
+    if(e.date>=berlinStartStr&&e.date<=todayStr)berlinKm+=e.km;
+  });
+
+  // Get current week target
+  let weekTarget=42;
+  WEEKS.forEach(w=>{if(todayStr>=w.dates[0]&&todayStr<=w.dates[1]){const km=parseInt(w.km)||42;if(!isNaN(km))weekTarget=km;}});
+  const monthTarget=weekTarget*4;
+  const yearTarget=2000;
+  const berlinTarget=840;
+
+  const wPct=Math.min(100,Math.round(weekKm/weekTarget*100));
+  const mPct=Math.min(100,Math.round(monthKm/monthTarget*100));
+  const yPct=Math.min(100,Math.round(yearKm/yearTarget*100));
+  const bPct=Math.min(100,Math.round(berlinKm/berlinTarget*100));
+
+  // Rings (circumference=175.9)
+  setRing('week-ring',wPct,'var(--teal)');
+  setRing('month-ring',mPct,'var(--purple)');
+  setRing('year-ring',yPct,'var(--amber)');
+  document.getElementById('week-pct').textContent=wPct+'%';
+  document.getElementById('month-pct').textContent=mPct+'%';
+  document.getElementById('year-pct').textContent=yPct+'%';
+  document.getElementById('week-vals').textContent=weekKm.toFixed(1)+'/'+weekTarget+'km';
+  document.getElementById('month-vals').textContent=monthKm.toFixed(1)+'/'+monthTarget+'km';
+  document.getElementById('year-vals').textContent=yearKm.toFixed(0)+'/'+yearTarget+'km';
+
+  // Progress bars
+  document.getElementById('berlin-prog').style.width=bPct+'%';
+  document.getElementById('berlin-prog-val').textContent=berlinKm.toFixed(0)+'/'+berlinTarget+'km';
+  const daysLeft=Math.max(0,Math.ceil((BERLIN-now)/86400000));
+  const timePct=Math.min(100,Math.round((1-daysLeft/TOTAL_DAYS)*100));
+  document.getElementById('time-prog').style.width=timePct+'%';
+  document.getElementById('time-prog-val').textContent=daysLeft+'天';
+
+  renderLog();
+  renderWeekChart();
+}
+
+function setRing(id,pct,color){
+  const circ=175.9;
+  const offset=circ-(pct/100*circ);
+  const el=document.getElementById(id);
+  if(el){el.style.strokeDashoffset=offset;el.style.stroke=color;}
+  const pctEl=document.getElementById(id.replace('-ring','-pct'));
+  if(pctEl)pctEl.style.color=color;
+}
+
+function addLog(){
+  const date=document.getElementById('log-date').value;
+  const km=parseFloat(document.getElementById('log-km').value);
+  const type=document.getElementById('log-type').value;
+  const hr=document.getElementById('log-hr').value;
+  const pace=document.getElementById('log-pace').value;
+  if(!date||!km||isNaN(km)){alert('请填写日期和距离');return;}
+  addLogEntry(date,km,type,hr,pace);
+  document.getElementById('log-km').value='';
+  document.getElementById('log-hr').value='';
+  document.getElementById('log-pace').value='';
+}
+
+function addLogEntry(date,km,type,hr,pace){
+  // Remove duplicate same date+type
+  trainingLog=trainingLog.filter(e=>!(e.date===date&&e.type===type&&e.km===km));
+  trainingLog.push({date,km,type,hr,pace});
+  trainingLog.sort((a,b)=>b.date.localeCompare(a.date));
+  saveTrainingLog();
+  updateStats();
+}
+
+function delLog(idx){
+  trainingLog.splice(idx,1);
+  saveTrainingLog();
+  updateStats();
+}
+
+function renderLog(){
+  const el=document.getElementById('log-list');
+  if(!trainingLog.length){el.innerHTML='<div style="text-align:center;padding:16px;font-size:12px;color:var(--text3)">还没有训练记录<br>在上方添加第一条</div>';return;}
+  const typeColor={E:'var(--teal)',T:'var(--amber)',MP:'var(--purple)',LSD:'var(--purple)',ST:'var(--blue)',越野:'var(--red)',比赛:'var(--amber)'};
+  el.innerHTML=trainingLog.slice(0,20).map((e,i)=>{
+    const d=new Date(e.date+'T00:00:00');
+    const lbl=(d.getMonth()+1)+'/'+d.getDate();
+    return `<div class="log-row">
+      <span class="log-date">${lbl}</span>
+      <div class="log-type" style="background:${typeColor[e.type]||'var(--text3)'}"></div>
+      <span class="log-name">${e.type} ${e.pace?'@'+e.pace:''} ${e.hr?e.hr+'bpm':''}</span>
+      <span class="log-km">${e.km}km</span>
+      <span class="log-del" onclick="delLog(${i})">×</span>
+    </div>`;
+  }).join('');
+}
+
+function renderWeekChart(){
+  const chart=document.getElementById('week-chart');
+  const labels=document.getElementById('week-chart-labels');
+  const now=new Date();
+  const weeks=[];
+  for(let i=7;i>=0;i--){
+    const d=new Date(now);
+    d.setDate(d.getDate()-(d.getDay()===0?6:d.getDay()-1)-i*7);
+    const start=d.toISOString().split('T')[0];
+    const end=new Date(d);end.setDate(d.getDate()+6);
+    const endStr=end.toISOString().split('T')[0];
+    let km=0;
+    trainingLog.forEach(e=>{if(e.date>=start&&e.date<=endStr)km+=e.km;});
+    weeks.push({start,km:parseFloat(km.toFixed(1))});
+  }
+  const maxKm=Math.max(...weeks.map(w=>w.km),50);
+  const typeColor={E:'var(--teal)',T:'var(--amber)',MP:'var(--purple)',LSD:'var(--purple)',ST:'var(--blue)',越野:'var(--red)',比赛:'var(--amber)'};
+  chart.innerHTML=weeks.map((w,i)=>{
+    const h=w.km>0?Math.max(4,Math.round(w.km/maxKm*100)):2;
+    const isThis=i===7;
+    return `<div class="bc-col"><div class="bc-bar" style="height:${h}%;background:${isThis?'var(--teal)':'rgba(0,200,150,0.4)'};" title="${w.km}km"></div></div>`;
+  }).join('');
+  const target=42;
+  const targetH=Math.round(target/maxKm*64);
+  chart.style.position='relative';
+  labels.innerHTML=weeks.map((w,i)=>{
+    const d=new Date(w.start+'T00:00:00');
+    return `<span>${(d.getMonth()+1)+'/'+d.getDate()}</span>`;
+  }).join('');
+}
+
+// ── SCHEDULE ──
+function setSchedView(v){
+  document.getElementById('week-view-wrap').classList.toggle('show',v==='week');
+  document.getElementById('day-view-wrap').classList.toggle('show',v==='day');
+  document.getElementById('vt-week').classList.toggle('active',v==='week');
+  document.getElementById('vt-day').classList.toggle('active',v==='day');
+}
+
+function buildWchips(){
+  const c=document.getElementById('wchips');
+  const todayStr=new Date().toISOString().split('T')[0];
+  WEEKS.forEach(w=>{
+    const chip=document.createElement('div');
+    chip.className='wchip'+(w.isRace?' race-c':'');
+    chip.textContent=w.label;
+    chip.dataset.wid=w.id;
+    chip.onclick=()=>showWeek(w.id);
+    c.appendChild(chip);
+  });
+}
+
+function showWeek(wid){
+  document.querySelectorAll('.wchip').forEach(c=>c.classList.toggle('active',c.dataset.wid===wid));
+  const week=WEEKS.find(w=>w.id===wid);
+  if(!week)return;
+  const todayStr=new Date().toISOString().split('T')[0];
+  const phColor=PHASE_COLOR[week.phase]||'var(--teal)';
+  let html=`<div class="wv-hdr">
+    <div><div class="wv-title">${week.id} · ${week.name}</div><div class="wv-dates">${fmtD(week.dates[0])} – ${fmtD(week.dates[1])} · ${week.phase}</div></div>
+    <div style="text-align:right"><div class="wv-km-big">${week.km}</div><div class="wv-km-lbl">周跑量目标</div></div>
+  </div>
+  <div class="wv-focus"><strong>本周重点：</strong>${week.focus}</div>`;
+  for(let i=0;i<7;i++){
+    const d=new Date(week.dates[0]+'T00:00:00');d.setDate(d.getDate()+i);
+    const dk=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    const tr=PLAN[dk];if(!tr)continue;
+    const isToday=dk===todayStr;
+    const wday=WEEKDAYS[d.getDay()];
+    const col=tr.color||'var(--text3)';
+    const badge=tr.badge||{bg:'var(--gray-dim)',color:'var(--text3)',text:tr.type||'—'};
+    const did='d-'+dk;
+    html+=`<div class="wv-row${isToday?' today-r':''}${tr.isRace?' race-r':''}" onclick="togWvD('${did}')">
+      <div class="wv-top">
+        <div class="wv-stripe" style="background:${col}"></div>
+        <div class="wv-daycol"><div class="wv-dn">周${wday}</div><div class="wv-dd${isToday?' today-n':''}">${d.getMonth()+1}/${d.getDate()}</div></div>
+        <div class="wv-main">
+          <div class="wv-dot" style="background:${col}"></div>
+          <div class="wv-info">
+            <div class="wv-name">${tr.isRest?'完全休息':tr.isRace?(tr.raceName||'比赛日'):(tr.title||tr.typeName)}</div>
+            <div class="wv-sub">${tr.typeName||''}</div>
+          </div>
+          <div class="wv-rc">
+            <div class="wv-badge" style="background:${badge.bg};color:${badge.color}">${badge.text}</div>
+            <div class="wv-km">${tr.isRest?'—':tr.isRace?(tr.raceKm+'km'):(tr.dist||'—')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="wv-detail" id="${did}">`;
+    if(tr.isRace){html+=`<div style="font-size:11px;color:var(--text2);line-height:1.7;white-space:pre-line">${tr.tip||''}</div>`;}
+    else if(tr.isRest){html+=`<div style="font-size:11px;color:var(--text2)">${tr.tip||'休息，睡够8小时。'}</div>`;}
+    else{
+      if(tr.dist&&tr.dist!=='辅助'){html+=`<div style="display:flex;gap:6px;margin-bottom:7px">
+        <div style="background:var(--bg2);border-radius:7px;padding:6px 8px;border:1px solid var(--border);flex:1;font-size:11px"><div style="color:var(--text3);font-size:9px;margin-bottom:2px">距离</div><div style="font-family:var(--fm)">${tr.dist}</div></div>
+        <div style="background:var(--bg2);border-radius:7px;padding:6px 8px;border:1px solid var(--border);flex:1;font-size:11px"><div style="color:var(--text3);font-size:9px;margin-bottom:2px">配速</div><div style="font-family:var(--fm)">${(tr.pace||'—').split('–')[0]}</div></div>
+        <div style="background:var(--bg2);border-radius:7px;padding:6px 8px;border:1px solid var(--border);flex:1;font-size:11px"><div style="color:var(--text3);font-size:9px;margin-bottom:2px">心率</div><div style="font-family:var(--fm);font-size:10px">${tr.hr||'—'}</div></div>
+      </div>`;}
+      if(tr.structure){tr.structure.forEach(s=>{html+=`<div class="wv-seg"><div class="wv-sp" style="background:${s.color}"></div><div class="wv-st">${s.name}：${s.desc}</div><div class="wv-sp2">${s.pace}</div></div>`;});}
+      if(tr.tip){html+=`<div class="wv-tip"><strong>💡 </strong>${tr.tip}</div>`;}
+    }
+    html+=`</div></div>`;
+  }
+  const wi=WEEKS.findIndex(w=>w.id===wid);
+  const pw=wi>0?WEEKS[wi-1]:null,nw=wi<WEEKS.length-1?WEEKS[wi+1]:null;
+  html+=`<div class="wnav">
+    <div class="wnav-btn" onclick="${pw?"showWeek('"+pw.id+"')":'void 0'}" style="${!pw?'opacity:.3;cursor:default':''}">${pw?'← '+pw.id:'—'}</div>
+    <div class="wnav-btn" onclick="${nw?"showWeek('"+nw.id+"')":'void 0'}" style="${!nw?'opacity:.3;cursor:default':''}">${nw?nw.id+' →':'—'}</div>
+  </div>`;
+  document.getElementById('wv-content').innerHTML=html;
+}
+
+function togWvD(id){const el=document.getElementById(id);if(el)el.classList.toggle('open');}
+function fmtD(str){const d=new Date(str+'T00:00:00');return(d.getMonth()+1)+'/'+d.getDate();}
+
+function setDate(val){
+  const p=document.getElementById('datePicker');
+  if(val==='today')p.value=new Date().toISOString().split('T')[0];
+  else if(val==='tomorrow'){const t=new Date();t.setDate(t.getDate()+1);p.value=t.toISOString().split('T')[0];}
+  else p.value=val;
+  lookupDate();
+}
+
+function lookupDate(){
+  const val=document.getElementById('datePicker').value;if(!val)return;
+  const d=new Date(val+'T00:00:00');
+  const tr=PLAN[val];
+  const dayNum=Math.ceil((d-PLAN_START)/86400000)+1;
+  const prog=Math.min(100,Math.max(0,(dayNum/TOTAL_DAYS*100)));
+  const isToday=val===new Date().toISOString().split('T')[0];
+  const m=d.getMonth()+1,day=d.getDate();
+  const result=document.getElementById('day-result');
+  if(!tr){result.innerHTML=`<div class="oor"><div style="font-size:24px;margin-bottom:6px">📭</div><div style="font-size:13px;font-weight:500">${m}/${day} 不在计划范围内</div><div style="font-size:11px;color:var(--text2);margin-top:4px">计划范围：2026/5/11–2026/9/27</div></div>`;return;}
+  const phColor=PHASE_COLOR[tr.phase]||'var(--teal)';
+  let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+    <div><div style="font-family:var(--fd);font-size:18px;font-weight:700">${m}月${day}日·周${WEEKDAYS[d.getDay()]}${isToday?' <span style="font-size:11px;color:var(--teal)">←今天</span>':''}</div><div style="font-size:10px;color:var(--text2);margin-top:2px">${tr.phase||''}</div></div>
+    <div style="font-family:var(--fm);font-size:11px;padding:3px 9px;border-radius:20px;border:1px solid var(--border2);color:var(--text3)">${tr.week||''}</div>
+  </div>
+  <div class="phase-bar"><div class="phase-fill" style="width:${prog.toFixed(0)}%;background:${phColor}"></div></div>
+  <div class="phase-info"><span>进度 ${prog.toFixed(0)}%</span><span>距柏林马 ${Math.max(0,Math.ceil((PLAN_END-d)/86400000))} 天</span></div>`;
+  if(tr.isRace){
+    const isB=tr.raceName&&tr.raceName.includes('柏林');
+    html+=`<div class="race-card"><div style="font-size:24px;text-align:center;margin-bottom:6px">${isB?'🏅':'🏔'}</div>
+    <div style="font-family:var(--fd);font-size:18px;font-weight:800;text-align:center;margin-bottom:3px">${tr.raceName}</div>
+    <div style="font-size:12px;color:var(--amber);text-align:center;margin-bottom:10px">${isB?'目标 Sub-4:00':tr.raceKm+'km·爬升'+tr.raceElev+'m·训练赛'}</div>
+    <div style="background:var(--bg3);border-radius:var(--r);padding:10px;font-size:11px;color:var(--text2);line-height:1.7;white-space:pre-line">${tr.tip}</div></div>`;
+  }else if(tr.isRest){
+    html+=`<div class="rest-card"><div style="font-size:28px;margin-bottom:6px">💤</div><div style="font-family:var(--fd);font-size:16px;font-weight:700;margin-bottom:5px">完全休息日</div><div style="font-size:12px;color:var(--text2);line-height:1.6">${tr.tip}</div></div>`;
+  }else{
+    const b=tr.badge||{bg:'var(--td)',color:'var(--teal)',text:tr.type};
+    html+=`<div class="card"><div class="card-hdr"><div style="display:flex;align-items:center;gap:6px"><div class="dot" style="background:${tr.color}"></div><div style="font-size:12px;font-weight:600;color:${tr.color}">${tr.typeName}</div></div><div class="badge" style="background:${b.bg};color:${b.color}">${b.text}</div></div>
+    <div class="card-body"><div style="font-family:var(--fd);font-size:17px;font-weight:700;margin-bottom:8px">${tr.title}</div>`;
+    if(tr.dist&&tr.dist!=='辅助')html+=`<div class="metrics-row"><div class="mbox"><div class="mlbl">距离</div><div class="mval">${tr.dist.replace('km','')}<span class="munit">km</span></div></div><div class="mbox"><div class="mlbl">配速</div><div class="mval" style="font-size:12px">${(tr.pace||'').split('–')[0]}<span class="munit">/k</span></div></div><div class="mbox"><div class="mlbl">心率</div><div class="mval" style="font-size:11px">${tr.hr||'—'}</div></div></div>`;
+    if(tr.structure){html+=`<div class="sbox"><div class="sbox-t">课程结构</div>`;tr.structure.forEach(s=>{html+=`<div class="seg"><div class="seg-pip" style="background:${s.color}"></div><div class="seg-n">${s.name}</div><div class="seg-d">${s.desc}</div><div class="seg-p">${s.pace}</div></div>`;});html+=`</div>`;}
+    html+=`<div class="coach-tip"><span>🤖</span><div><strong>教练提示：</strong>${tr.tip}</div></div></div></div>`;
+  }
+  const prev=new Date(d);prev.setDate(prev.getDate()-1);
+  const next=new Date(d);next.setDate(next.getDate()+1);
+  html+=`<div class="day-nav"><div class="day-nav-btn" onclick="setDate('${prev.toISOString().split('T')[0]}')">&larr; ${prev.getMonth()+1}/${prev.getDate()}</div><div class="day-nav-btn" onclick="setDate('${next.toISOString().split('T')[0]}')">${next.getMonth()+1}/${next.getDate()} &rarr;</div></div>`;
+  result.innerHTML=html;
+}
+
+// ── DIARY ──
+let diaryData={};
+let diaryState={view:'year',year:null,month:null,date:null};
+const MONTHS_ZH=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+const DAYS_ZH=['日','一','二','三','四','五','六'];
+
+function initDiary(){
+  try{const s=localStorage.getItem('wendy_diary');if(s)diaryData=JSON.parse(s);}catch(e){}
+  renderDiaryYear();
+}
+function saveDiary(){try{localStorage.setItem('wendy_diary',JSON.stringify(diaryData));}catch(e){}}
+
+function renderDiaryYear(){
+  diaryState.view='year';
+  document.getElementById('diary-cal-card').style.display='block';
+  document.getElementById('diary-entry').style.display='none';
+  document.getElementById('diary-year-row').style.display='flex';
+  document.getElementById('diary-month-grid').style.display='none';
+  document.getElementById('diary-day-grid').style.display='none';
+  const now=new Date();
+  const years=[2025,2026,2027];
+  document.getElementById('diary-year-row').innerHTML=years.map(y=>{
+    const has=Object.keys(diaryData).some(k=>k.startsWith(y+''));
+    return `<div class="diary-year-btn${y===now.getFullYear()?' active':''}" onclick="selectDiaryYear(${y})">${y}${has?'<div class="diary-dot"></div>':''}</div>`;
+  }).join('');
+}
+
+function selectDiaryYear(year){
+  diaryState.year=year;diaryState.view='month';
+  document.getElementById('diary-year-row').style.display='none';
+  document.getElementById('diary-month-grid').style.display='block';
+  document.getElementById('diary-year-label').textContent=year+'年';
+  const now=new Date();
+  document.getElementById('diary-months').innerHTML=MONTHS_ZH.map((m,i)=>{
+    const mo=i+1;
+    const has=Object.keys(diaryData).some(k=>k.startsWith(year+'-'+String(mo).padStart(2,'0')));
+    const cur=year===now.getFullYear()&&mo===now.getMonth()+1;
+    return `<div class="diary-month-btn${has?' has-entry':''}${cur?' current':''}" onclick="selectDiaryMonth(${year},${mo})">${m}</div>`;
+  }).join('');
+}
+
+function selectDiaryMonth(year,month){
+  diaryState.year=year;diaryState.month=month;diaryState.view='day';
+  document.getElementById('diary-month-grid').style.display='none';
+  document.getElementById('diary-day-grid').style.display='block';
+  document.getElementById('diary-month-label').textContent=year+'年 '+MONTHS_ZH[month-1];
+  const now=new Date();
+  const todayStr=now.toISOString().split('T')[0];
+  const firstDay=new Date(year,month-1,1).getDay();
+  const daysInMonth=new Date(year,month,0).getDate();
+  let html=DAYS_ZH.map(d=>`<div class="diary-day-hdr">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++)html+=`<div class="diary-day-btn empty"></div>`;
+  for(let d=1;d<=daysInMonth;d++){
+    const ds=year+'-'+String(month).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const has=diaryData[ds]&&diaryData[ds].msgs&&diaryData[ds].msgs.length>0;
+    const isT=ds===todayStr;
+    const tr=PLAN[ds];
+    const isR=tr&&tr.isRace;
+    let cls='diary-day-btn'+(isT?' today':'')+(has?' has-entry':'')+(isR?' race-day':'');
+    html+=`<div class="${cls}" onclick="selectDiaryDate('${ds}')">${d}</div>`;
+  }
+  document.getElementById('diary-days').innerHTML=html;
+}
+
+function selectDiaryDate(dateStr){
+  diaryState.date=dateStr;
+  document.getElementById('diary-cal-card').style.display='none';
+  document.getElementById('diary-entry').style.display='block';
+  const d=new Date(dateStr+'T00:00:00');
+  const m=d.getMonth()+1,day=d.getDate(),wday=DAYS_ZH[d.getDay()];
+  document.getElementById('diary-date-title').textContent=m+'月'+day+'日 · 周'+wday;
+  const tr=PLAN[dateStr];
+  document.getElementById('diary-date-sub').textContent=tr?(tr.week||'')+' · '+(tr.phase||''):'计划范围外';
+  // Plan card
+  const pc=document.getElementById('diary-plan-content');
+  if(tr){
+    if(tr.isRest)pc.innerHTML=`<div style="font-size:12px;color:var(--text2)">💤 完全休息日</div>`;
+    else if(tr.isRace)pc.innerHTML=`<div style="font-size:13px;font-weight:600;color:var(--amber)">${tr.raceName}</div><div style="font-size:11px;color:var(--text2);margin-top:3px">${tr.raceKm}km · 训练赛</div>`;
+    else pc.innerHTML=`<div style="font-size:13px;font-weight:600;margin-bottom:5px">${tr.title||tr.typeName}</div><div style="display:flex;gap:8px;font-size:11px;color:var(--text2)"><span>📏 ${tr.dist||'—'}</span><span>⏱ ${(tr.pace||'').split('–')[0]||'—'}</span><span>❤️ ${tr.hr||'—'}</span></div>`;
+  }else{
+    pc.innerHTML=`<div style="font-size:12px;color:var(--text3)">此日期不在备战计划内</div>`;
+  }
+  // Training log
+  const logs=trainingLog.filter(e=>e.date===dateStr);
+  const tc=document.getElementById('diary-training-card');
+  const tcon=document.getElementById('diary-training-content');
+  if(logs.length>0){
+    tc.style.display='block';
+    tcon.innerHTML=logs.map(e=>`<div style="font-size:12px;display:flex;gap:8px"><span style="font-weight:600;color:var(--teal)">${e.km}km</span><span style="color:var(--text2)">${e.type}</span>${e.pace?`<span style="color:var(--text3)">@${e.pace}</span>`:''} ${e.hr?`<span style="color:var(--text3)">${e.hr}bpm</span>`:''}</div>`).join('');
+  }else{tc.style.display='none';}
+  // Msgs
+  const msgs=document.getElementById('diary-msgs');
+  if(!diaryData[dateStr]||!diaryData[dateStr].msgs||diaryData[dateStr].msgs.length===0){
+    const tr2=PLAN[dateStr];
+    const welcome=tr2?(tr2.isRest?'今天是休息日，有什么想聊的吗？':tr2.isRace?`今天是${tr2.raceName}！有什么问题要问我？`:`今天计划是${tr2.title||tr2.typeName}，有什么问题？`):'这天不在训练计划内，有什么想问的吗？';
+    msgs.innerHTML=`<div class="diary-msg coach"><div>${welcome}</div><div class="msg-time">教练</div></div>`;
+  }else{
+    renderDiaryMsgs(dateStr);
+  }
+}
+
+function renderDiaryMsgs(dateStr){
+  const msgs=document.getElementById('diary-msgs');
+  const data=diaryData[dateStr];
+  if(!data||!data.msgs||!data.msgs.length)return;
+  msgs.innerHTML=data.msgs.map(m=>`<div class="diary-msg ${m.role}"><div>${m.text}</div><div class="msg-time">${m.time||''}</div></div>`).join('');
+  msgs.scrollTop=msgs.scrollHeight;
+}
+
+async function sendDiaryMsg(){
+  const input=document.getElementById('diary-input');
+  const text=input.value.trim();
+  if(!text)return;
+  const dateStr=diaryState.date;if(!dateStr)return;
+  if(!diaryData[dateStr])diaryData[dateStr]={msgs:[]};
+  const time=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+  diaryData[dateStr].msgs.push({role:'user',text,time});
+  saveDiary();renderDiaryMsgs(dateStr);input.value='';
+  document.getElementById('diary-loading').classList.add('show');
+  const tr=PLAN[dateStr];
+  const d=new Date(dateStr+'T00:00:00');
+  const dateLabel=(d.getMonth()+1)+'月'+d.getDate()+'日';
+  const planDesc=tr?(tr.isRest?'完全休息日':tr.isRace?tr.raceName:tr.title||tr.typeName):'计划外';
+  const logs=trainingLog.filter(e=>e.date===dateStr);
+  const logDesc=logs.length>0?logs.map(e=>`跑了${e.km}km心率${e.hr||'?'}bpm`).join('；'):'无训练记录';
+  const history=(diaryData[dateStr].msgs||[]).slice(-8).map(m=>({role:m.role==='user'?'user':'assistant',content:m.text}));
+  const prompt=`日期：${dateLabel}\n当日计划：${planDesc}\n实际训练：${logDesc}\n问题：${text}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json','x-api-key':'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','anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-sonnet-4-5',max_tokens:600,system:WENDY_PROFILE,
+        messages:[...history.slice(0,-1),{role:'user',content:prompt}]})
+    });
+    const data=await res.json();
+    if(!res.ok){throw new Error('API '+res.status+': '+(data.error&&data.error.message||JSON.stringify(data)));}
+    const reply=data.content.map(b=>b.text||'').join('');
+    document.getElementById('diary-loading').classList.remove('show');
+    const rt=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    diaryData[dateStr].msgs.push({role:'coach',text:reply,time:rt});
+    saveDiary();renderDiaryMsgs(dateStr);
+  }catch(e){
+    document.getElementById('diary-loading').classList.remove('show');
+    const rt=new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit'});
+    diaryData[dateStr].msgs.push({role:'coach',text:'错误：'+e.message,time:rt});
+    saveDiary();renderDiaryMsgs(dateStr);
+  }
+}
+
+function diaryBack(to){
+  if(to==='year'){renderDiaryYear();}
+  else if(to==='month'){document.getElementById('diary-day-grid').style.display='none';document.getElementById('diary-month-grid').style.display='block';}
+  else if(to==='day'){document.getElementById('diary-cal-card').style.display='block';document.getElementById('diary-entry').style.display='none';document.getElementById('diary-year-row').style.display='none';document.getElementById('diary-month-grid').style.display='none';document.getElementById('diary-day-grid').style.display='block';}
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter'&&!e.shiftKey&&document.activeElement.id==='diary-input'){e.preventDefault();sendDiaryMsg();}
+});
+
+// Init on load
+window.addEventListener('load',function(){initDiary();});
+</script>
+</body>
+</html>
