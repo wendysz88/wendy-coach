@@ -1,50 +1,44 @@
 // Wendy Coach - Cloudflare Worker with KV Storage
-// Handles data sync across all devices
+// Only handles /api/* routes, static assets served automatically
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, X-User-Key',
+  'Access-Control-Allow-Headers': 'Content-Type',
 };
 
 export default {
   async fetch(request, env) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+
     // Handle CORS preflight
     if (request.method === 'OPTIONS') {
       return new Response(null, { headers: CORS_HEADERS });
     }
 
-    const url = new URL(request.url);
-    const path = url.pathname;
-
-    // Serve static HTML app
-    if (path === '/' || path === '/index.html') {
-      const asset = await env.ASSETS.fetch(request);
-      return asset;
-    }
-
-    // API routes for KV data
+    // Only handle API routes
     if (path.startsWith('/api/')) {
       return handleAPI(request, env, path);
     }
 
-    // All other static assets
+    // All other requests → serve static assets
     return env.ASSETS.fetch(request);
   }
 };
 
 async function handleAPI(request, env, path) {
-  const userKey = 'wendy'; // Single user app
-  
+  const userKey = 'wendy';
+
   try {
-    // GET /api/data/:type - read data
+    // GET /api/data/:type
     if (request.method === 'GET' && path.startsWith('/api/data/')) {
       const dataType = path.replace('/api/data/', '');
       const value = await env.COACH_DATA.get(`${userKey}:${dataType}`);
       return jsonResponse({ data: value ? JSON.parse(value) : null });
     }
 
-    // POST /api/data/:type - write data
+    // POST /api/data/:type
     if (request.method === 'POST' && path.startsWith('/api/data/')) {
       const dataType = path.replace('/api/data/', '');
       const body = await request.json();
@@ -52,14 +46,7 @@ async function handleAPI(request, env, path) {
       return jsonResponse({ success: true });
     }
 
-    // DELETE /api/data/:type - delete data
-    if (request.method === 'DELETE' && path.startsWith('/api/data/')) {
-      const dataType = path.replace('/api/data/', '');
-      await env.COACH_DATA.delete(`${userKey}:${dataType}`);
-      return jsonResponse({ success: true });
-    }
-
-    // GET /api/sync - get all data at once
+    // GET /api/sync
     if (request.method === 'GET' && path === '/api/sync') {
       const [log, diary, reviews] = await Promise.all([
         env.COACH_DATA.get(`${userKey}:training_log`),
@@ -73,14 +60,17 @@ async function handleAPI(request, env, path) {
       });
     }
 
-    // POST /api/sync - save all data at once
+    // POST /api/sync
     if (request.method === 'POST' && path === '/api/sync') {
       const body = await request.json();
-      await Promise.all([
-        body.training_log !== undefined && env.COACH_DATA.put(`${userKey}:training_log`, JSON.stringify(body.training_log)),
-        body.diary !== undefined && env.COACH_DATA.put(`${userKey}:diary`, JSON.stringify(body.diary)),
-        body.reviews !== undefined && env.COACH_DATA.put(`${userKey}:reviews`, JSON.stringify(body.reviews)),
-      ]);
+      const ops = [];
+      if (body.training_log !== undefined)
+        ops.push(env.COACH_DATA.put(`${userKey}:training_log`, JSON.stringify(body.training_log)));
+      if (body.diary !== undefined)
+        ops.push(env.COACH_DATA.put(`${userKey}:diary`, JSON.stringify(body.diary)));
+      if (body.reviews !== undefined)
+        ops.push(env.COACH_DATA.put(`${userKey}:reviews`, JSON.stringify(body.reviews)));
+      await Promise.all(ops);
       return jsonResponse({ success: true });
     }
 
