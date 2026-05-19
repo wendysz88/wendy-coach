@@ -1,0 +1,10 @@
+name = "wendy-coach"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+
+[[kv_namespaces]]
+binding = "COACH_DATA"
+id = "0c665d0061074a9098ef574fd95c792c"
+
+[site]
+bucket = "./"
